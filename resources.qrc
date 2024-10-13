@@ -12,5 +12,7 @@
         <file>mainWidget/plane.png</file>
         <file>mainWidget/bluetooth-active.png</file>
         <file>mainWidget/bluetooth-512.png</file>
+        <file>mainWidget/server-black.png</file>
+        <file>mainWidget/server-on.gif</file>
     </qresource>
 </RCC>

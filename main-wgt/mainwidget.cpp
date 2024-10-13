@@ -13,36 +13,73 @@ MainWidget::MainWidget(QWidget *parent)
 }
 
 void MainWidget::init() {
+    ui->onServerButton->hide();
     connect(ui->serverButton, &QPushButton::clicked, this, &MainWidget::activeServer);
     connect(ui->clientButton, &QPushButton::clicked, this, &MainWidget::activeClient);
+
+    connect(ui->onServerButton, &QPushButton::clicked, this, &MainWidget::animationOnServerButton);
+    connect(ui->connectButton, &QPushButton::clicked, this, &MainWidget::animationConnectButtonAnimation);
 }
 
 
-MainWidget::~MainWidget()
-{
+MainWidget::~MainWidget() {
     delete ui;
 }
 
 void MainWidget::activeServer() {
+    ui->connectButton->hide();
+    ui->onServerButton->show();
+
+
+    if (ui->connectButton->isChecked()) {
+        animationConnectButtonAnimation(false);
+        ui->connectButton->setChecked(false);
+    }
     ui->clientButton->setChecked(false);
+
 }
 
 void MainWidget::activeClient() {
-    ui->serverButton->setChecked(false);
+    // if (ui->clientButton->isChecked()) {
+        ui->onServerButton->hide();
+        ui->connectButton->show();
+
+        if (ui->onServerButton->isChecked()) {
+            animationOnServerButton(false);
+            ui->onServerButton->setChecked(false);
+        }
+        ui->serverButton->setChecked(false);
+    // }
 }
 
-void MainWidget::startConnectButtonAnimation() {
-    m_movie = new QMovie(":/mainWidget/connect-colored.gif");
-    // Устанавливаем анимацию как иконку для QPushButton
-    ui->connectButton->setIconSize(QSize(150, 150));  // Задаем размер иконки (подогнать под размер GIF)
-    QObject::connect(m_movie, &QMovie::frameChanged, [this]() {
-        ui->connectButton->setIcon(QIcon(m_movie->currentPixmap()));  // Обновляем иконку для кнопки при каждом изменении кадра
-    });
+void MainWidget::animationOnServerButton(bool checked) {
+    if (checked) {
+        m_movieOnServer = new QMovie(":/mainWidget/server-on.gif");
+        // Устанавливаем анимацию как иконку для QPushButton
+        QObject::connect(m_movieOnServer, &QMovie::frameChanged, [this]() {
+            ui->onServerButton->setIcon(QIcon(m_movieOnServer->currentPixmap()));  // Обновляем иконку для кнопки при каждом изменении кадра
+        });
+        m_movieOnServer->start();
+    } else {
+        ui->onServerButton->setIcon(QIcon(":/mainWidget/server-black"));
+        m_movieOnServer->stop();
+        delete m_movieOnServer;
+    }
 
-    // Запускаем анимацию GIF
 }
 
-void MainWidget::stopConnectButtonAnimation() {
-    m_movie->stop();
-    delete m_movie;
+
+void MainWidget::animationConnectButtonAnimation(bool checked) {
+    if (checked) {
+        m_movieConnect = new QMovie(":/mainWidget/connect-colored.gif");
+        QObject::connect(m_movieConnect, &QMovie::frameChanged, [this]() {
+            ui->connectButton->setIcon(QIcon(m_movieConnect->currentPixmap()));  // Обновляем иконку для кнопки при каждом изменении кадра
+        });
+        m_movieConnect->start();
+    } else  {
+        ui->connectButton->setIcon(QIcon(":/mainWidget/connect-black"));
+        m_movieConnect->stop();
+        delete m_movieConnect;
+    }
 }
+

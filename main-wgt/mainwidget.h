@@ -21,14 +21,16 @@ private slots:
     void activeServer();
     void activeClient();
 
+    void animationConnectButtonAnimation(bool checked);
+    void animationOnServerButton(bool checked);
+
 private:
     Ui::MainWidget *ui;
-    QMovie *m_movie;
+    QMovie *m_movieConnect;
+    QMovie *m_movieOnServer;
 
     void init();
-    void startConnectButtonAnimation();
-    void stopConnectButtonAnimation();
-    void setGradient(QLabel *label);
+
 };
 
 #endif // MAINWIDGET_H

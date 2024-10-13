@@ -26,6 +26,7 @@ void MainWindow::init() {
     m_activeButton = ui->mainButton;
     m_activeButton->setChecked(true);
 
+
     ui->stackedWidget->addWidget(m_searchWidget);
     ui->stackedWidget->addWidget(m_mainWidget);
     ui->stackedWidget->addWidget(m_settingsWidget);
@@ -55,3 +56,6 @@ void MainWindow::setActiveButton(QPushButton *button) {
     m_activeButton = button;
     m_activeButton->setChecked(true);
 }
+
+
+
