@@ -1,0 +1,16 @@
+<RCC>
+    <qresource prefix="/">
+        <file>statusbar/main-black.png</file>
+        <file>statusbar/main-colored.png</file>
+        <file>statusbar/search-black.png</file>
+        <file>statusbar/search-colored.png</file>
+        <file>statusbar/settings-black.png</file>
+        <file>statusbar/settings-colored.png</file>
+        <file>mainWidget/connect-colored.gif</file>
+        <file>mainWidget/connect-black.png</file>
+        <file>mainWidget/connect-done.png</file>
+        <file>mainWidget/plane.png</file>
+        <file>mainWidget/bluetooth-active.png</file>
+        <file>mainWidget/bluetooth-512.png</file>
+    </qresource>
+</RCC>
