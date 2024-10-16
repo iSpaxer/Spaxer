@@ -15,6 +15,7 @@ SOURCES += \
     main-wgt/gradientbutton.cpp \
     main-wgt/mainwidget.cpp \
     main.cpp \
+    search-wgt/bluetoothstandartitem.cpp \
     search-wgt/searchitemdelegate.cpp \
     search-wgt/searchwidget.mm \
     settings-wgt/settingswidget.cpp
@@ -27,6 +28,7 @@ HEADERS += \
     main-wgt/gradientbutton.h \
     main-wgt/mainwidget.h \
     search-wgt/SearchWidget.h \
+    search-wgt/bluetoothstandartitem.h \
     search-wgt/searchitemdelegate.h \
     settings-wgt/settingswidget.h
 
@@ -44,6 +46,8 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 macx {
     QMAKE_INFO_PLIST = $$PWD/macOs/Info.plist
+
+    LIBS += -framework IOBluetooth
 }
 
 DISTFILES += \

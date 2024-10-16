@@ -5,6 +5,7 @@
 
 #include <QFrame>
 #include <QStandardItemModel>
+#include <QLowEnergyController>
 #include <QBluetoothDeviceDiscoveryAgent>
 #include <QBluetoothDeviceInfo>
 #include <QBluetoothLocalDevice>
@@ -24,8 +25,11 @@ public:
     ~SearchWidget();
 
 public slots:
+    void connectToDevices();
+    void updateConnectedDevices();
     void activeLocalDeviceIsServer(bool isServer);
     void setConnectedDevicesToServer(QList<QString> connectedDevices);
+
 
 private slots:
     void onItemClicked(const QModelIndex &index);
@@ -34,6 +38,7 @@ private slots:
     void deviceDiscovered(const QBluetoothDeviceInfo &device);
     void scanFinished();
 
+
 private:
     const static QString CONNECT;
     const static QString NOT_CONNECTED;
@@ -41,11 +46,12 @@ private:
     bool m_localDeviceIsServer;
     Ui::searchWidget *ui;
     SearchItemDelegate *m_delegate;
+    // QLowEnergyController *m_controller;
     QStandardItemModel *m_modelByFindedDevices;
     QStandardItemModel *m_modelByDevicesForConnection;
     QStandardItemModel *m_modelByConnectionDevice;
     QBluetoothDeviceDiscoveryAgent *m_discoveryAgent;
-    QBluetoothLocalDevice *m_localDevice;
+    // QBluetoothLocalDevice *m_localDevice;
 
     void initFindedDevices();
     bool checkOnUnicModel(const QStandardItemModel *model, const QString deviceBleName);

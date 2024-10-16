@@ -25,6 +25,7 @@ private slots:
     void animationOnServerButton(bool checked);
 
 signals:
+    void connectToDevices();
     void activeDeviceIsServer(bool isServer);
 
 private:

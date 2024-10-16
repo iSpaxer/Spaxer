@@ -17,6 +17,8 @@ MainWindow::MainWindow(QWidget *parent):
 
     connect(m_mainWidget, &MainWidget::activeDeviceIsServer,
             m_searchWidget, &SearchWidget::activeLocalDeviceIsServer);
+    connect(m_mainWidget, &MainWidget::connectToDevices,
+            m_searchWidget, &SearchWidget::connectToDevices);
 
 
 }

@@ -55,6 +55,7 @@ void MainWidget::activeClient() {
 
 void MainWidget::animationOnServerButton(bool checked) {
     if (checked) {
+        emit connectToDevices();
         m_movieOnServer = new QMovie(":/mainWidget/server-on.gif");
         // Устанавливаем анимацию как иконку для QPushButton
         QObject::connect(m_movieOnServer, &QMovie::frameChanged, [this]() {
