@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>CFBundleName</key>
+    <string>Spaxer</string>
+
+    <key>CFBundleIdentifier</key>
+    <string>ru.blbu</string>
+
+
+    <key>NSBluetoothAlwaysUsageDescription</key>
+    <string>Ваше приложение использует Bluetooth для подключения к другим устройствам.</string>
+
+    <key>NSAppleEventsUsageDescription</key>
+    <string>Это приложение требует доступа к Apple Events.</string>
+
+    <key>NSAppleEventsUsageDescription</key>
+    <string>Это приложение требует доступа к буферу обмена.</string>
+</dict>
+</plist>
+
+
+<!--
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>CFBundleName</key>
+    <string>ВашеПриложение</string>
+    <key>CFBundleIdentifier</key>
+    <string>com.example.ваше_приложение</string>
+    <key>CFBundleVersion</key>
+    <string>1.0</string>
+    <key>NSHumanReadableCopyright</key>
+    <string>© 2024 ВашеИмя</string>
+    <key>NSAppleEventsUsageDescription</key>
+    <string>Это приложение требует доступа к буферу обмена.</string>
+    <key>NSMicrophoneUsageDescription</key>
+    <string>Это приложение требует доступа к вашему микрофону.</string>
+    <key>NSCameraUsageDescription</key>
+    <string>Это приложение требует доступа к вашей камере.</string>
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>Это приложение требует доступа к вашей фотогалерее.</string>
+</dict>
+</plist>-->

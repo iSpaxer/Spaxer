@@ -111,14 +111,14 @@ QPushButton:pressed {
          </property>
          <property name="icon">
           <iconset>
-           <activeoff>:/statusbar/search-black.png</activeoff>
-           <activeon>:/statusbar/search-colored.png</activeon>
+           <activeoff>:/statusbar/devices-black.png</activeoff>
+           <activeon>:/statusbar/devices-colored.png</activeon>
           </iconset>
          </property>
          <property name="iconSize">
           <size>
-           <width>26</width>
-           <height>26</height>
+           <width>34</width>
+           <height>34</height>
           </size>
          </property>
          <property name="checkable">

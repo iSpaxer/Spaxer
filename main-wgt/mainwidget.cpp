@@ -3,17 +3,17 @@
 
 #include <QPainter>
 
-MainWidget::MainWidget(QWidget *parent)
-    : QFrame(parent)
-    , ui(new Ui::MainWidget) {
+MainWidget::MainWidget(QWidget *parent):
+    QFrame(parent),
+    ui(new Ui::MainWidget) {
     ui->setupUi(this);
 
     init();
-
 }
 
 void MainWidget::init() {
     ui->onServerButton->hide();
+
     connect(ui->serverButton, &QPushButton::clicked, this, &MainWidget::activeServer);
     connect(ui->clientButton, &QPushButton::clicked, this, &MainWidget::activeClient);
 
@@ -37,19 +37,20 @@ void MainWidget::activeServer() {
     }
     ui->clientButton->setChecked(false);
 
+    emit activeDeviceIsServer(true);
 }
 
 void MainWidget::activeClient() {
-    // if (ui->clientButton->isChecked()) {
-        ui->onServerButton->hide();
-        ui->connectButton->show();
+    ui->onServerButton->hide();
+    ui->connectButton->show();
 
-        if (ui->onServerButton->isChecked()) {
-            animationOnServerButton(false);
-            ui->onServerButton->setChecked(false);
-        }
-        ui->serverButton->setChecked(false);
-    // }
+    if (ui->onServerButton->isChecked()) {
+        animationOnServerButton(false);
+        ui->onServerButton->setChecked(false);
+    }
+    ui->serverButton->setChecked(false);
+
+    emit activeDeviceIsServer(false);
 }
 
 void MainWidget::animationOnServerButton(bool checked) {

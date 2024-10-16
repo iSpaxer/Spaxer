@@ -10,11 +10,13 @@ MainWindow::MainWindow(QWidget *parent):
     m_searchWidget(new SearchWidget),
     m_mainWidget(new MainWidget),
     m_settingsWidget(new SettingsWidget),
-    m_activeButton(nullptr) {
+    m_activeButtonStatusBar(nullptr) {
     ui->setupUi(this);
 
     init();
 
+    connect(m_mainWidget, &MainWidget::activeDeviceIsServer,
+            m_searchWidget, &SearchWidget::activeLocalDeviceIsServer);
 
 
 }
@@ -22,9 +24,8 @@ MainWindow::MainWindow(QWidget *parent):
 void MainWindow::init() {
 
     // TODO логику, если выключен блютус, включаем настройки
-
-    m_activeButton = ui->mainButton;
-    m_activeButton->setChecked(true);
+    m_activeButtonStatusBar = ui->mainButton;
+    m_activeButtonStatusBar->setChecked(true);
 
 
     ui->stackedWidget->addWidget(m_searchWidget);
@@ -52,9 +53,9 @@ void MainWindow::connectButtonToWidget(QPushButton *button, int index) {
 }
 
 void MainWindow::setActiveButton(QPushButton *button) {
-    m_activeButton->setChecked(false);
-    m_activeButton = button;
-    m_activeButton->setChecked(true);
+    m_activeButtonStatusBar->setChecked(false);
+    m_activeButtonStatusBar = button;
+    m_activeButtonStatusBar->setChecked(true);
 }
 
 

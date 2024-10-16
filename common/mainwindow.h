@@ -30,7 +30,7 @@ private:
     MainWidget *m_mainWidget;
     SettingsWidget *m_settingsWidget;
 
-    QPushButton *m_activeButton;
+    QPushButton *m_activeButtonStatusBar;
 
     void init();
     void connectButtonToWidget(QPushButton *button, int index);

@@ -14,5 +14,10 @@
         <file>mainWidget/bluetooth-512.png</file>
         <file>mainWidget/server-black.png</file>
         <file>mainWidget/server-on.gif</file>
+        <file>searchWidget/bluetooth-black.png</file>
+        <file>searchWidget/bluetooth-white.png</file>
+        <file>searchWidget/connected-devices.png</file>
+        <file>statusbar/devices-black.png</file>
+        <file>statusbar/devices-colored.png</file>
     </qresource>
 </RCC>

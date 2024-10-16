@@ -24,11 +24,13 @@ private slots:
     void animationConnectButtonAnimation(bool checked);
     void animationOnServerButton(bool checked);
 
+signals:
+    void activeDeviceIsServer(bool isServer);
+
 private:
     Ui::MainWidget *ui;
     QMovie *m_movieConnect;
     QMovie *m_movieOnServer;
-
     void init();
 
 };
