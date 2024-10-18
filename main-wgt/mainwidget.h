@@ -27,6 +27,7 @@ private slots:
 signals:
     void connectToDevices();
     void activeDeviceIsServer(bool isServer);
+    void sendMessage(QByteArray message);
 
 private:
     Ui::MainWidget *ui;

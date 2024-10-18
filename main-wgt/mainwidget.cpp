@@ -19,6 +19,10 @@ void MainWidget::init() {
 
     connect(ui->onServerButton, &QPushButton::clicked, this, &MainWidget::animationOnServerButton);
     connect(ui->connectButton, &QPushButton::clicked, this, &MainWidget::animationConnectButtonAnimation);
+
+    connect(ui->sendButton, &QPushButton::clicked, [this]() {
+        emit sendMessage("Hello world!");
+    });
 }
 
 
@@ -55,7 +59,6 @@ void MainWidget::activeClient() {
 
 void MainWidget::animationOnServerButton(bool checked) {
     if (checked) {
-        emit connectToDevices();
         m_movieOnServer = new QMovie(":/mainWidget/server-on.gif");
         // Устанавливаем анимацию как иконку для QPushButton
         QObject::connect(m_movieOnServer, &QMovie::frameChanged, [this]() {
@@ -73,6 +76,7 @@ void MainWidget::animationOnServerButton(bool checked) {
 
 void MainWidget::animationConnectButtonAnimation(bool checked) {
     if (checked) {
+        emit connectToDevices();
         m_movieConnect = new QMovie(":/mainWidget/connect-colored.gif");
         QObject::connect(m_movieConnect, &QMovie::frameChanged, [this]() {
             ui->connectButton->setIcon(QIcon(m_movieConnect->currentPixmap()));  // Обновляем иконку для кнопки при каждом изменении кадра

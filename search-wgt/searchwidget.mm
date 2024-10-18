@@ -13,10 +13,10 @@ SearchWidget::SearchWidget(QWidget *parent):
     QFrame(parent),
     ui(new Ui::searchWidget),
     m_delegate(new SearchItemDelegate(ui->findedDevicesView)),
-    // m_(nullptr),
     m_modelByFindedDevices(new QStandardItemModel(this)),
     m_modelByDevicesForConnection(new QStandardItemModel(this)),
-    m_discoveryAgent(new QBluetoothDeviceDiscoveryAgent(this)) {
+    m_discoveryAgent(new QBluetoothDeviceDiscoveryAgent(this)),
+    m_bleClient(new BleClient(this)) {
     ui->setupUi(this);
 
     initFindedDevices();
@@ -35,6 +35,8 @@ SearchWidget::SearchWidget(QWidget *parent):
     connect(m_discoveryAgent, &QBluetoothDeviceDiscoveryAgent::deviceDiscovered, this, &SearchWidget::deviceDiscovered);
     connect(m_discoveryAgent, &QBluetoothDeviceDiscoveryAgent::finished, this, &SearchWidget::scanFinished);
 
+    connect(m_bleClient, &BleClient::connected, this, &SearchWidget::connectedBluetooth);
+    connect(m_bleClient, &BleClient::disconnected, this, &SearchWidget::disconnectedBluetooth);
 }
 
 void SearchWidget::initFindedDevices() {
@@ -71,14 +73,19 @@ SearchWidget::~SearchWidget() {
  * Сначала нужно будет добавить его в подключаемы потом попробовать подключиться
  *
  */
-
+// подключаемся к серверу
 void SearchWidget::connectToDevices() {
   for (int row = 0; row < m_modelByDevicesForConnection->rowCount(); ++row) {
-      BluetoothStandartItem* item = dynamic_cast<BluetoothStandartItem*>(m_modelByDevicesForConnection->item(row));
-      QString deviceName = item->text();
+    auto _item = m_modelByDevicesForConnection->item(row);
+    const BluetoothStandartItem* item = dynamic_cast<BluetoothStandartItem*>(m_modelByDevicesForConnection->item(row));
+    if (item) {
+        m_bleClient->connectToDevice(item->getDevice());
+        qDebug() << "connecting to " << item->text();
+    } else qDebug() << "не найден элемент для подключения...";
   }
 }
 
+// кладем вправо
 void SearchWidget::onItemClicked(const QModelIndex &index) {
     // Извлекаем элемент по индексу
     if (!m_localDeviceIsServer) {
@@ -91,12 +98,15 @@ void SearchWidget::onItemClicked(const QModelIndex &index) {
 
             qDebug() << connect.isEmpty() << " " << connect;
 
-            QStandardItem *item = new QStandardItem(deviceBleName);
-            if (connect.isEmpty())
-                item->setData(NOT_CONNECTED, Qt::UserRole + 2);
-            else
-                item->setData(CONNECT, Qt::UserRole + 1);
-            m_modelByDevicesForConnection->appendRow(item);
+            BluetoothStandartItem *_item = dynamic_cast<BluetoothStandartItem*>(m_modelByFindedDevices->itemFromIndex(index));
+            if (_item) {
+              auto item = new BluetoothStandartItem(_item);
+              if (connect.isEmpty())
+                  item->setData(NOT_CONNECTED, Qt::UserRole + 2);
+              else
+                  item->setData(CONNECT, Qt::UserRole + 1);
+              m_modelByDevicesForConnection->appendRow(item);
+            } else qDebug() << "не найден элемент для подключения...";
         }
     }
 }
@@ -108,10 +118,14 @@ void SearchWidget::onItemDoubleCLicked(const QModelIndex &index) {
     }
 }
 
+// найдено устройство
 void SearchWidget::deviceDiscovered(const QBluetoothDeviceInfo &device) {
   if (!device.name().isEmpty() && device.name() != device.address().toString()) {
-
-    BluetoothStandartItem *item1 = new BluetoothStandartItem(device.name(), new QBluetoothDeviceInfo(device));
+    qDebug() << device.name();
+    // if (device.name() == "Spaxer") {
+    //   m_bleClient->connectToDevice(device);
+    // }
+    BluetoothStandartItem *item1 = new BluetoothStandartItem(device.name(), device);
     item1->setData(NOT_CONNECTED, Qt::UserRole + 2);
     m_modelByFindedDevices->appendRow(item1);\
   }
@@ -122,25 +136,39 @@ void SearchWidget::scanFinished() {
 }
 
 void SearchWidget::activeLocalDeviceIsServer(bool isServer) {
-    m_localDeviceIsServer = isServer;
-    if (isServer) {
-        if (!m_modelByConnectionDevice) m_modelByConnectionDevice = new QStandardItemModel(this);
-        ui->nameForActiveLocalDevice->setText("Подключенные устройства к серверу");
-        ui->devicesForConnection->setModel(m_modelByConnectionDevice);
-    } else {
-        ui->nameForActiveLocalDevice->setText(" Устройства для подключения");
-        ui->devicesForConnection->setModel(m_modelByDevicesForConnection);
-    }
+  m_localDeviceIsServer = isServer;
+  if (isServer) {
+      if (!m_modelByConnectionDevice) m_modelByConnectionDevice = new QStandardItemModel(this);
+      ui->nameForActiveLocalDevice->setText("Подключенные устройства к серверу");
+      ui->devicesForConnection->setModel(m_modelByConnectionDevice);
+  } else {
+      ui->nameForActiveLocalDevice->setText(" Устройства для подключения");
+      ui->devicesForConnection->setModel(m_modelByDevicesForConnection);
+  }
 }
 
 // todo ?
 void SearchWidget::setConnectedDevicesToServer(QList<QString> connectedDevices) {
-    if (!m_modelByConnectionDevice) m_modelByConnectionDevice = new QStandardItemModel(this);
-    m_modelByConnectionDevice->clear();
-    for (auto device: connectedDevices) {
-        QStandardItem *item = new QStandardItem(device);
-        m_modelByConnectionDevice->appendRow(item);
-    }
+  // if (!m_modelByConnectionDevice) m_modelByConnectionDevice = new QStandardItemModel(this);
+
+  // m_modelByConnectionDevice->clear();
+  // for (auto device: connectedDevices) {
+  //     QStandardItem *item = new QStandardItem(device);
+  //     m_modelByConnectionDevice->appendRow(item);
+  // }
+  qDebug() << "setConnectedDevicesToServer ???";
+}
+
+void SearchWidget::connectedBluetooth() {
+  qDebug() << "connected to Server";
+}
+
+void SearchWidget::disconnectedBluetooth() {
+  qDebug() << "disconnect to Server";
+}
+
+void SearchWidget::sendMessage(const QByteArray &message) {
+  m_bleClient->sendMessage(message);
 }
 
 void SearchWidget::updateConnectedDevices() {
@@ -154,14 +182,14 @@ void SearchWidget::updateConnectedDevices() {
               QString deviceAddress = QString::fromNSString([device addressString]);
               qDebug() << "quint32: " << deviceClassAsQuint32 << " deviceName: " << deviceName << " deviceAddress: " << deviceAddress;
               if (checkOnUnicModel(m_modelByFindedDevices, deviceName)) {
-                BluetoothStandartItem *item = new BluetoothStandartItem(deviceName, new QBluetoothDeviceInfo(QBluetoothAddress(deviceName), deviceAddress, deviceClassAsQuint32));
+                BluetoothStandartItem *item = new BluetoothStandartItem(deviceName, QBluetoothDeviceInfo(QBluetoothAddress(deviceName), deviceAddress, deviceClassAsQuint32));
                 item->setData(CONNECT, Qt::UserRole + 1);
                 m_modelByFindedDevices->appendRow(item);
               }
             }
         }
   #else
-// todo достать q32
+// todo достать q32 и сделать с BluetoothStandartItem
       // QList<QBluetoothAddress> connectedDevices = m_localDevice->connectedDevices();
       // QObject::connect(m_discoveryAgent, &QBluetoothDeviceDiscoveryAgent::deviceDiscovered,
       //                  [connectedDevices, this](const QBluetoothDeviceInfo &deviceInfo) {

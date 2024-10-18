@@ -1,6 +1,7 @@
 #ifndef SEARCHWIDGET_H
 #define SEARCHWIDGET_H
 
+#include "search-wgt/bleclient.h"
 #include "searchitemdelegate.h"
 
 #include <QFrame>
@@ -29,7 +30,9 @@ public slots:
     void updateConnectedDevices();
     void activeLocalDeviceIsServer(bool isServer);
     void setConnectedDevicesToServer(QList<QString> connectedDevices);
-
+    void connectedBluetooth();
+    void disconnectedBluetooth();
+    void sendMessage(const QByteArray &message);
 
 private slots:
     void onItemClicked(const QModelIndex &index);
@@ -39,6 +42,8 @@ private slots:
     void scanFinished();
 
 
+
+
 private:
     const static QString CONNECT;
     const static QString NOT_CONNECTED;
@@ -46,11 +51,12 @@ private:
     bool m_localDeviceIsServer;
     Ui::searchWidget *ui;
     SearchItemDelegate *m_delegate;
-    // QLowEnergyController *m_controller;
     QStandardItemModel *m_modelByFindedDevices;
     QStandardItemModel *m_modelByDevicesForConnection;
     QStandardItemModel *m_modelByConnectionDevice;
     QBluetoothDeviceDiscoveryAgent *m_discoveryAgent;
+
+    BleClient *m_bleClient;
     // QBluetoothLocalDevice *m_localDevice;
 
     void initFindedDevices();

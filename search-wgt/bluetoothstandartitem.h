@@ -8,12 +8,13 @@
 class BluetoothStandartItem : public QStandardItem {
 
 public:
-    explicit BluetoothStandartItem(QString text, QBluetoothDeviceInfo *device);
+    explicit BluetoothStandartItem(const QString &text, QBluetoothDeviceInfo device);
+    explicit BluetoothStandartItem(const BluetoothStandartItem* _copy);
 
-    QBluetoothDeviceInfo *getDevice() const;
+    QBluetoothDeviceInfo getDevice() const;
 
 private:
-    QBluetoothDeviceInfo *m_device;
+    QBluetoothDeviceInfo m_device;
 };
 
 #endif // BLUETOOTHSTANDARTITEM_H

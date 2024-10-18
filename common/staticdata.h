@@ -6,8 +6,8 @@
 class StaticData : public QObject {
     Q_OBJECT
 public:
-    static const QString serviceUuid;
-    static const QString characteristicUuid;
+    static const QString SERVICE_UUID;
+    static const QString CHARACTERISTIC_UUID;
 
     explicit StaticData(QObject *parent = nullptr);
 

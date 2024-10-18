@@ -1,11 +1,18 @@
 #include "bluetoothstandartitem.h"
 
-BluetoothStandartItem::BluetoothStandartItem(QString text, QBluetoothDeviceInfo *device):
+BluetoothStandartItem::BluetoothStandartItem(const QString &text, QBluetoothDeviceInfo device):
     QStandardItem(text),
     m_device(device) {
 
 }
 
-QBluetoothDeviceInfo *BluetoothStandartItem::getDevice() const {
+// утечка памяти
+BluetoothStandartItem::BluetoothStandartItem(const BluetoothStandartItem *_copy):
+    QStandardItem(_copy->text()),
+    m_device(_copy->getDevice()) {
+
+}
+
+QBluetoothDeviceInfo BluetoothStandartItem::getDevice() const {
     return m_device;
 }
