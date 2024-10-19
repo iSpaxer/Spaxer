@@ -61,7 +61,7 @@ void BleClient::serviceStateChanged(QLowEnergyService::ServiceState newState) {
         targetCharacteristic = characteristic;
 
         // Готовы отправить сообщение
-        QByteArray message("Hello from client!");
+        QByteArray message("First connect message");
         service->writeCharacteristic(targetCharacteristic, message);
 
         QLowEnergyDescriptor cccd = characteristic.descriptor(QBluetoothUuid::DescriptorType::ClientCharacteristicConfiguration);
@@ -83,8 +83,7 @@ void BleClient::serviceStateChanged(QLowEnergyService::ServiceState newState) {
 
 void BleClient::sendMessage(const QByteArray &message) {
     if (service) {
-        QByteArray a("Hello!");
-        service->writeCharacteristic(targetCharacteristic, a);
+        service->writeCharacteristic(targetCharacteristic, message);
     }
 }
 

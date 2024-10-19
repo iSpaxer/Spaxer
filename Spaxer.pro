@@ -10,6 +10,8 @@ CONFIG += c++17
 
 SOURCES += \
     # bluetooth/bleclient.cpp \
+    common/bleserver.cpp \
+    common/clipboardmonitor.cpp \
     common/mainwindow.cpp \
     common/staticdata.cpp \
     main-wgt/gradientbutton.cpp \
@@ -24,6 +26,8 @@ SOURCES += \
 
 HEADERS += \
     # bluetooth/bleclient.h \
+    common/bleserver.h \
+    common/clipboardmonitor.h \
     common/mainwindow.h \
     common/staticdata.h \
     main-wgt/gradientbutton.h \

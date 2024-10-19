@@ -16,8 +16,18 @@ SearchWidget::SearchWidget(QWidget *parent):
     m_modelByFindedDevices(new QStandardItemModel(this)),
     m_modelByDevicesForConnection(new QStandardItemModel(this)),
     m_discoveryAgent(new QBluetoothDeviceDiscoveryAgent(this)),
-    m_bleClient(new BleClient(this)) {
+    m_bleClient(nullptr),
+    m_bleServer(nullptr),
+    m_clibBoardMonitor(new ClipboardMonitor(this)) {
     ui->setupUi(this);
+
+    if (m_localDeviceIsServer) {
+      m_bleServer = new BleServer(this);
+    } else {
+      m_bleClient = new BleClient(this);
+      connect(m_bleClient, &BleClient::connected, this, &SearchWidget::connectedBluetooth);
+      connect(m_bleClient, &BleClient::disconnected, this, &SearchWidget::disconnectedBluetooth);
+    }
 
     initFindedDevices();
     updateConnectedDevices();
@@ -35,8 +45,9 @@ SearchWidget::SearchWidget(QWidget *parent):
     connect(m_discoveryAgent, &QBluetoothDeviceDiscoveryAgent::deviceDiscovered, this, &SearchWidget::deviceDiscovered);
     connect(m_discoveryAgent, &QBluetoothDeviceDiscoveryAgent::finished, this, &SearchWidget::scanFinished);
 
-    connect(m_bleClient, &BleClient::connected, this, &SearchWidget::connectedBluetooth);
-    connect(m_bleClient, &BleClient::disconnected, this, &SearchWidget::disconnectedBluetooth);
+
+
+    connect(m_clibBoardMonitor, &ClipboardMonitor::changeText, this, &SearchWidget::sendMessageStr);
 }
 
 void SearchWidget::initFindedDevices() {
@@ -65,21 +76,12 @@ SearchWidget::~SearchWidget() {
     delete ui;
 }
 
-/*
- * Остановился на том, чтобы в BluetoothStandartItem хранить QBluetoothDeviceInfo,
- * чтобы потом доставать их и с ними пробовать подключиться к устройству через кнопку
- * в главном меню. Скорее всего нужно будет сначала протестировать чтобы Линукс был
- * сервером, я был заранее к нему подключен (чтобы по быстрее было)
- * Сначала нужно будет добавить его в подключаемы потом попробовать подключиться
- *
- */
-// подключаемся к серверу
 void SearchWidget::connectToDevices() {
   for (int row = 0; row < m_modelByDevicesForConnection->rowCount(); ++row) {
     auto _item = m_modelByDevicesForConnection->item(row);
     const BluetoothStandartItem* item = dynamic_cast<BluetoothStandartItem*>(m_modelByDevicesForConnection->item(row));
     if (item) {
-        m_bleClient->connectToDevice(item->getDevice());
+        if (m_bleClient) m_bleClient->connectToDevice(item->getDevice());
         qDebug() << "connecting to " << item->text();
     } else qDebug() << "не найден элемент для подключения...";
   }
@@ -168,7 +170,11 @@ void SearchWidget::disconnectedBluetooth() {
 }
 
 void SearchWidget::sendMessage(const QByteArray &message) {
-  m_bleClient->sendMessage(message);
+  if (m_bleClient) m_bleClient->sendMessage(message);
+}
+
+void SearchWidget::sendMessageStr(const QString &message) {
+  if (m_bleClient) m_bleClient->sendMessage(message.toUtf8());
 }
 
 void SearchWidget::updateConnectedDevices() {

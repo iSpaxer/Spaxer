@@ -2,6 +2,7 @@
 #define SEARCHWIDGET_H
 
 #include "search-wgt/bleclient.h"
+#include "common/bleserver.h"
 #include "searchitemdelegate.h"
 
 #include <QFrame>
@@ -10,6 +11,8 @@
 #include <QBluetoothDeviceDiscoveryAgent>
 #include <QBluetoothDeviceInfo>
 #include <QBluetoothLocalDevice>
+
+#include <common/clipboardmonitor.h>
 
 
 namespace Ui {
@@ -33,6 +36,7 @@ public slots:
     void connectedBluetooth();
     void disconnectedBluetooth();
     void sendMessage(const QByteArray &message);
+    void sendMessageStr(const QString &message);
 
 private slots:
     void onItemClicked(const QModelIndex &index);
@@ -57,6 +61,8 @@ private:
     QBluetoothDeviceDiscoveryAgent *m_discoveryAgent;
 
     BleClient *m_bleClient;
+    BleServer *m_bleServer;
+    ClipboardMonitor *m_clibBoardMonitor;
     // QBluetoothLocalDevice *m_localDevice;
 
     void initFindedDevices();
