@@ -18,6 +18,7 @@ void MainWidget::init() {
     connect(ui->clientButton, &QPushButton::clicked, this, &MainWidget::activeClient);
 
     connect(ui->onServerButton, &QPushButton::clicked, this, &MainWidget::animationOnServerButton);
+    connect(ui->onServerButton, &QPushButton::clicked, this, &MainWidget::enableServer);
     connect(ui->connectButton, &QPushButton::clicked, this, &MainWidget::animationConnectButtonAnimation);
 
     connect(ui->sendButton, &QPushButton::clicked, [this]() {

@@ -76,6 +76,12 @@ SearchWidget::~SearchWidget() {
     delete ui;
 }
 
+void SearchWidget::enableServer(bool isEnable) {
+    if (isEnable) {
+      m_bleServer->start();
+    }
+}
+
 void SearchWidget::connectToDevices() {
   for (int row = 0; row < m_modelByDevicesForConnection->rowCount(); ++row) {
     auto _item = m_modelByDevicesForConnection->item(row);
@@ -143,9 +149,13 @@ void SearchWidget::activeLocalDeviceIsServer(bool isServer) {
       if (!m_modelByConnectionDevice) m_modelByConnectionDevice = new QStandardItemModel(this);
       ui->nameForActiveLocalDevice->setText("Подключенные устройства к серверу");
       ui->devicesForConnection->setModel(m_modelByConnectionDevice);
+      m_bleClient->deleteLater();
+      if (!m_bleServer) m_bleServer = new BleServer(this);
   } else {
-      ui->nameForActiveLocalDevice->setText(" Устройства для подключения");
+      ui->nameForActiveLocalDevice->setText("Устройства для подключения");
       ui->devicesForConnection->setModel(m_modelByDevicesForConnection);
+      m_bleServer->deleteLater();
+      if (!m_bleClient) m_bleClient = new BleClient(this);
   }
 }
 

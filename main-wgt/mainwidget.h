@@ -9,8 +9,7 @@ namespace Ui {
 class MainWidget;
 }
 
-class MainWidget : public QFrame
-{
+class MainWidget : public QFrame {
     Q_OBJECT
 
 public:
@@ -25,6 +24,7 @@ private slots:
     void animationOnServerButton(bool checked);
 
 signals:
+    void enableServer(bool isEnable);
     void connectToDevices();
     void activeDeviceIsServer(bool isServer);
     void sendMessage(QByteArray message);

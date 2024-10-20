@@ -29,6 +29,7 @@ public:
     ~SearchWidget();
 
 public slots:
+    void enableServer(bool isEnable);
     void connectToDevices();
     void updateConnectedDevices();
     void activeLocalDeviceIsServer(bool isServer);
@@ -52,6 +53,7 @@ private:
     const static QString CONNECT;
     const static QString NOT_CONNECTED;
 
+    bool m_serverIsEnable;
     bool m_localDeviceIsServer;
     Ui::searchWidget *ui;
     SearchItemDelegate *m_delegate;

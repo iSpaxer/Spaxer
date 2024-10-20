@@ -20,6 +20,8 @@ class BleServer : public QObject {
 public:
     explicit BleServer(QObject *parent);
 
+public slots:
+    void start();
 private slots:
     void deviceConnected();
     void deviceDisconnected();

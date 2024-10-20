@@ -6,6 +6,11 @@ BleServer::BleServer(QObject *parent): QObject(parent),
     uuid("{00001802-0000-1000-8000-00805F9B34FB}"),
     charUuid("{00005678-0000-1000-8000-00805F9B34FB}") {
     // Создаем данные сервиса
+    start();
+}
+
+void BleServer::start() {
+    qDebug() << "start Server";
     serviceData.setType(QLowEnergyServiceData::ServiceTypePrimary);
 
     // Задаем уникальный UUID для сервиса (можно использовать SerialPort, но лучше задать свой)
@@ -30,7 +35,7 @@ BleServer::BleServer(QObject *parent): QObject(parent),
     QLowEnergyAdvertisingData advertisingData;
     advertisingData.setDiscoverability(QLowEnergyAdvertisingData::DiscoverabilityGeneral);
     advertisingData.setIncludePowerLevel(true);
-    // advertisingData.setLocalName("BLE_Server");
+    advertisingData.setLocalName("BLE_Server");
     advertisingData.setServices(QList<QBluetoothUuid>() << QBluetoothUuid(uuid)); // Тот же UUID сервиса хз но можно и неодинаково
 
     // Подключение сигналов
