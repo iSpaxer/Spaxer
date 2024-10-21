@@ -28,6 +28,11 @@ private slots:
     void characteristicChanged(const QLowEnergyCharacteristic &characteristic, const QByteArray &newValue);
     void sendNotification(const QByteArray &data);
 
+signals:
+    void getText(const QString &text);
+    void getImage(const QImage &image);
+    void getData(const QByteArray &data);
+
 private:
     QLowEnergyController *controller = nullptr;
     QLowEnergyService *service = nullptr;

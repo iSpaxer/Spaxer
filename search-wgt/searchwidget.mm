@@ -4,7 +4,8 @@
 
 #include <QScroller>
 #include <QEasingCurve>
-#include <IOBluetooth/IOBluetooth.h>
+#include <QBuffer>
+// #include <IOBluetooth/IOBluetooth.h>
 
 const QString SearchWidget::CONNECT = "Подключено";
 const QString SearchWidget::NOT_CONNECTED = "Не подключено";
@@ -45,9 +46,11 @@ SearchWidget::SearchWidget(QWidget *parent):
     connect(m_discoveryAgent, &QBluetoothDeviceDiscoveryAgent::deviceDiscovered, this, &SearchWidget::deviceDiscovered);
     connect(m_discoveryAgent, &QBluetoothDeviceDiscoveryAgent::finished, this, &SearchWidget::scanFinished);
 
+    // клиент отправляет данные и отправляем TODO протестировать фотки
+    connect(m_clibBoardMonitor, &ClipboardMonitor::copyText, this, &SearchWidget::sendMessageStr);
+    connect(m_clibBoardMonitor, &ClipboardMonitor::copyImage, this, &SearchWidget::sendMessageImage);
 
-
-    connect(m_clibBoardMonitor, &ClipboardMonitor::changeText, this, &SearchWidget::sendMessageStr);
+    // получение с клиента данных и запись их в буффер обмена
 }
 
 void SearchWidget::initFindedDevices() {
@@ -149,26 +152,19 @@ void SearchWidget::activeLocalDeviceIsServer(bool isServer) {
       if (!m_modelByConnectionDevice) m_modelByConnectionDevice = new QStandardItemModel(this);
       ui->nameForActiveLocalDevice->setText("Подключенные устройства к серверу");
       ui->devicesForConnection->setModel(m_modelByConnectionDevice);
-      m_bleClient->deleteLater();
-      if (!m_bleServer) m_bleServer = new BleServer(this);
+      if (m_bleClient) m_bleClient->deleteLater();
+      if (!m_bleServer) {
+          m_bleServer = new BleServer(this);
+          connect(m_bleServer, &BleServer::getText, m_clibBoardMonitor, &ClipboardMonitor::setText);
+          connect(m_bleServer, &BleServer::getImage, m_clibBoardMonitor, &ClipboardMonitor::setImage);
+          connect(m_bleServer, &BleServer::getData, m_clibBoardMonitor, &ClipboardMonitor::setData);
+      }
   } else {
       ui->nameForActiveLocalDevice->setText("Устройства для подключения");
       ui->devicesForConnection->setModel(m_modelByDevicesForConnection);
-      m_bleServer->deleteLater();
+      if (m_bleServer) m_bleServer->deleteLater();
       if (!m_bleClient) m_bleClient = new BleClient(this);
   }
-}
-
-// todo ?
-void SearchWidget::setConnectedDevicesToServer(QList<QString> connectedDevices) {
-  // if (!m_modelByConnectionDevice) m_modelByConnectionDevice = new QStandardItemModel(this);
-
-  // m_modelByConnectionDevice->clear();
-  // for (auto device: connectedDevices) {
-  //     QStandardItem *item = new QStandardItem(device);
-  //     m_modelByConnectionDevice->appendRow(item);
-  // }
-  qDebug() << "setConnectedDevicesToServer ???";
 }
 
 void SearchWidget::connectedBluetooth() {
@@ -187,23 +183,27 @@ void SearchWidget::sendMessageStr(const QString &message) {
   if (m_bleClient) m_bleClient->sendMessage(message.toUtf8());
 }
 
+void SearchWidget::sendMessageImage(const QImage &image) {
+  if (m_bleClient) m_bleClient->sendMessage(convertImageToByteArray(image));
+}
+
 void SearchWidget::updateConnectedDevices() {
   #ifdef Q_OS_MAC
-    NSArray *connectedDevices = [IOBluetoothDevice pairedDevices];
-        for (IOBluetoothDevice *device in connectedDevices) {
-            if ([device isConnected]) {
-              BluetoothClassOfDevice classOfDevice = [device classOfDevice];
-              quint32 deviceClassAsQuint32 = (quint32)classOfDevice;
-              QString deviceName = QString::fromNSString([device name]);
-              QString deviceAddress = QString::fromNSString([device addressString]);
-              qDebug() << "quint32: " << deviceClassAsQuint32 << " deviceName: " << deviceName << " deviceAddress: " << deviceAddress;
-              if (checkOnUnicModel(m_modelByFindedDevices, deviceName)) {
-                BluetoothStandartItem *item = new BluetoothStandartItem(deviceName, QBluetoothDeviceInfo(QBluetoothAddress(deviceName), deviceAddress, deviceClassAsQuint32));
-                item->setData(CONNECT, Qt::UserRole + 1);
-                m_modelByFindedDevices->appendRow(item);
-              }
-            }
-        }
+    // NSArray *connectedDevices = [IOBluetoothDevice pairedDevices];
+    //     for (IOBluetoothDevice *device in connectedDevices) {
+    //         if ([device isConnected]) {
+    //           BluetoothClassOfDevice classOfDevice = [device classOfDevice];
+    //           quint32 deviceClassAsQuint32 = (quint32)classOfDevice;
+    //           QString deviceName = QString::fromNSString([device name]);
+    //           QString deviceAddress = QString::fromNSString([device addressString]);
+    //           qDebug() << "quint32: " << deviceClassAsQuint32 << " deviceName: " << deviceName << " deviceAddress: " << deviceAddress;
+    //           if (checkOnUnicModel(m_modelByFindedDevices, deviceName)) {
+    //             BluetoothStandartItem *item = new BluetoothStandartItem(deviceName, QBluetoothDeviceInfo(QBluetoothAddress(deviceName), deviceAddress, deviceClassAsQuint32));
+    //             item->setData(CONNECT, Qt::UserRole + 1);
+    //             m_modelByFindedDevices->appendRow(item);
+    //           }
+    //         }
+    //     }
   #else
 // todo достать q32 и сделать с BluetoothStandartItem
       // QList<QBluetoothAddress> connectedDevices = m_localDevice->connectedDevices();
@@ -222,6 +222,23 @@ void SearchWidget::updateConnectedDevices() {
       //                       }
       //                  });
   #endif
+}
+
+QByteArray SearchWidget::convertImageToByteArray(const QImage &image) {
+    QByteArray byteArray;
+    QBuffer buffer(&byteArray);
+    buffer.open(QIODevice::WriteOnly);
+
+    // Сохраняем изображение в его исходном формате
+    if (image.save(&buffer)) {
+        // Если формат не задан, QImage сам использует формат исходного изображения
+        return byteArray;  // Возвращаем данные как QByteArray
+    }
+    else {
+        // Обработка ошибок сохранения
+        qDebug() << "Failed to save image to QByteArray.";
+        return QByteArray();  // Пустой QByteArray для ошибки
+    }
 }
 
 

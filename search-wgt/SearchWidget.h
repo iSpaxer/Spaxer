@@ -33,11 +33,11 @@ public slots:
     void connectToDevices();
     void updateConnectedDevices();
     void activeLocalDeviceIsServer(bool isServer);
-    void setConnectedDevicesToServer(QList<QString> connectedDevices);
     void connectedBluetooth();
     void disconnectedBluetooth();
     void sendMessage(const QByteArray &message);
     void sendMessageStr(const QString &message);
+    void sendMessageImage(const QImage &image);
 
 private slots:
     void onItemClicked(const QModelIndex &index);
@@ -69,6 +69,7 @@ private:
 
     void initFindedDevices();
     bool checkOnUnicModel(const QStandardItemModel *model, const QString deviceBleName);
+    QByteArray convertImageToByteArray(const QImage &image);
 };
 
 #endif // SEARCHWIDGET_H

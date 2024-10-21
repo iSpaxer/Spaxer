@@ -16,15 +16,17 @@ public:
     explicit ClipboardMonitor(QObject *parent = nullptr);
 
 public slots:
-    void setTextIn(const QString &text);
-    void setImageIn(const QImage &image);
+    void setText(const QString &text);
+    void setImage(const QImage &image);
+    void setData(const QByteArray &data);
 
 private slots:
     void checkClipboardTimer();
 
 signals:
-    void changeText(const QString &text);
-    void changeImage(const QImage &image);
+    void copyText(const QString &text);
+    void copyImage(const QImage &image);
+    void copyData(const QByteArray &data);
 
 private:
     QClipboard *clipboard;

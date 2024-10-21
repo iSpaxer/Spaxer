@@ -1,5 +1,7 @@
 #include "bleserver.h"
 
+#include <QImage>
+
 BleServer::BleServer(QObject *parent): QObject(parent),
     serviceData(QLowEnergyServiceData()),
     charData(QLowEnergyCharacteristicData()),
@@ -59,9 +61,29 @@ void BleServer::deviceDisconnected() {
     qDebug() << "Client disconnected!";
 }
 
-void BleServer::characteristicChanged(const QLowEnergyCharacteristic &characteristic, const QByteArray &newValue) {
-    qDebug() << "Received data from client:" << newValue;
-    // Здесь можно обработать данные, пришедшие от клиента
+void BleServer::characteristicChanged(const QLowEnergyCharacteristic &characteristic, const QByteArray &data) {
+    qDebug() << "Received data from client:" << data;
+
+    const QString dataText = QString::fromUtf8(data);
+    if (!dataText.isEmpty() && !dataText.contains(QChar::ReplacementCharacter)) {
+        // Это текст, закодированный в UTF-8
+        qDebug() << "QByteArray содержит текст: " << dataText;
+        emit getText(dataText);
+        return;
+    }
+
+    QImage image;
+    if (image.loadFromData(data)) {
+        // Это изображение
+        qDebug() << "QByteArray содержит изображение";
+        emit getImage(image);
+        return;
+    }
+
+    else {
+        qDebug() << "QByteArray содержит неизвестный файл";
+        emit getData(data);
+    }
 }
 
 void BleServer::sendNotification(const QByteArray &data) {

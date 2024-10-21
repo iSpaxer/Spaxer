@@ -14,6 +14,7 @@ SOURCES += \
     common/clipboardmonitor.cpp \
     common/mainwindow.cpp \
     common/staticdata.cpp \
+    frame.cpp \
     main-wgt/gradientbutton.cpp \
     main-wgt/mainwidget.cpp \
     main.cpp \
@@ -30,6 +31,7 @@ HEADERS += \
     common/clipboardmonitor.h \
     common/mainwindow.h \
     common/staticdata.h \
+    frame.h \
     main-wgt/gradientbutton.h \
     main-wgt/mainwidget.h \
     search-wgt/SearchWidget.h \
@@ -41,6 +43,7 @@ HEADERS += \
 
 FORMS += \
     common/mainwindow.ui \
+    frame.ui \
     main-wgt/mainwidget.ui \
     search-wgt/searchwidget.ui \
     settings-wgt/settingswidget.ui
@@ -50,10 +53,17 @@ qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
+# QMAKE_INFO_PLIST = $$PWD/macOs/Info.plist
+ios {
+    QMAKE_INFO_PLIST = $$PWD/macOs/Info.plist
+    QMAKE_TARGET_BUNDLE_IDENTIFIER = com.mycompany.spaxer
+    LIBS += -framework CoreBluetooth
+}
+# LIBS += -framework IOBluetooth
 macx {
     QMAKE_INFO_PLIST = $$PWD/macOs/Info.plist
 
-    LIBS += -framework IOBluetooth
+    # LIBS += -framework IOBluetooth
 }
 
 DISTFILES += \

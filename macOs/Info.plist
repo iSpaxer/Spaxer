@@ -2,45 +2,47 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-    <key>CFBundleName</key>
-    <string>Spaxer</string>
-
-    <key>CFBundleIdentifier</key>
-    <string>ru.blbu</string>
-
-
-    <key>NSBluetoothAlwaysUsageDescription</key>
-    <string>Ваше приложение использует Bluetooth для подключения к другим устройствам.</string>
-
-    <key>NSAppleEventsUsageDescription</key>
-    <string>Это приложение требует доступа к Apple Events.</string>
-
-    <key>NSAppleEventsUsageDescription</key>
-    <string>Это приложение требует доступа к буферу обмена.</string>
+	<key>CFBundleDisplayName</key>
+	<string>Spaxer</string>
+	<key>CFBundleExecutable</key>
+	<string>Spaxer</string>
+	<key>CFBundleIcons</key>
+	<dict>
+		<key>CFBundlePrimaryIcon</key>
+		<dict>
+			<key>CFBundleIconFiles</key>
+			<array>
+				<string>AppIcon60x60</string>
+			</array>
+		</dict>
+	</dict>
+	<key>CFBundleIdentifier</key>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>NSAppleEventsUsageDescription</string>
+	<key>CFBundleName</key>
+	<string>$(PRODUCT_NAME)</string>
+	<key>CFBundlePackageType</key>
+	<string>$(PRODUCT_BUNDLE_PACKAGE_TYPE)</string>
+	<key>CFBundleVersion</key>
+	<string>$(CURRENT_PROJECT_VERSION)</string>
+	<key>MinimumOSVersion</key>
+	<string>17.0</string>
+	<key>NSAppleEventsUsageDescription</key>
+	<string>This appicatio need Buffer</string>
+	<key>NSBluetoothAlwaysUsageDescription</key>
+	<string>This application need Blueetooth</string>
+	<key>NSBluetoothPeripheralUsageDescription</key>
+	<string>Приложение использует Bluetooth для работы с периферийными устройствами.</string>
+	<key>UILaunchStoryboardName</key>
+	<string>LaunchScreen</string>
+	<key>UIRequiresFullScreen</key>
+	<true/>
+	<key>UISupportedInterfaceOrientations</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
+	</array>
 </dict>
 </plist>
-
-
-<!--
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-<plist version="1.0">
-<dict>
-    <key>CFBundleName</key>
-    <string>ВашеПриложение</string>
-    <key>CFBundleIdentifier</key>
-    <string>com.example.ваше_приложение</string>
-    <key>CFBundleVersion</key>
-    <string>1.0</string>
-    <key>NSHumanReadableCopyright</key>
-    <string>© 2024 ВашеИмя</string>
-    <key>NSAppleEventsUsageDescription</key>
-    <string>Это приложение требует доступа к буферу обмена.</string>
-    <key>NSMicrophoneUsageDescription</key>
-    <string>Это приложение требует доступа к вашему микрофону.</string>
-    <key>NSCameraUsageDescription</key>
-    <string>Это приложение требует доступа к вашей камере.</string>
-    <key>NSPhotoLibraryUsageDescription</key>
-    <string>Это приложение требует доступа к вашей фотогалерее.</string>
-</dict>
-</plist>-->

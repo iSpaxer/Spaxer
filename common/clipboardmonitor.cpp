@@ -12,12 +12,18 @@ ClipboardMonitor::ClipboardMonitor(QObject *parent)
     #endif
 }
 
-void ClipboardMonitor::setTextIn(const QString &text) {
+void ClipboardMonitor::setText(const QString &text) {
     QApplication::clipboard()->setText(text);
 }
 
-void ClipboardMonitor::setImageIn(const QImage &image) {
+void ClipboardMonitor::setImage(const QImage &image) {
     QApplication::clipboard()->setImage(image);
+}
+
+void ClipboardMonitor::setData(const QByteArray &data) {
+    auto mimeData = new QMimeData();
+    mimeData->setData("application/octet-stream", data);
+    QApplication::clipboard()->setMimeData(mimeData);
 }
 
 void ClipboardMonitor::checkClipboardTimer() {
@@ -29,7 +35,7 @@ void ClipboardMonitor::checkClipboardTimer() {
         if (currentText != lastClipboardText) {
             lastClipboardText = currentText;
             qDebug() << "Clipboard updated (Text): " << currentText;
-            emit changeText(currentText);
+            emit copyText(currentText);
             // Здесь можно вызывать свою функцию для обработки текста
         }
     }
@@ -40,7 +46,7 @@ void ClipboardMonitor::checkClipboardTimer() {
         if (currentImage != lastClipboardImage) {
             lastClipboardImage = currentImage;
             qDebug() << "Clipboard updated (Image)";
-            emit changeImage(currentImage);
+            emit copyImage(currentImage);
             // Здесь можно вызывать свою функцию для обработки изображений
         }
     }
@@ -75,7 +81,7 @@ void ClipboardMonitor::startClipboardSignals() {
         if (currentText != lastClipboardText) {
             lastClipboardText = currentText;
             qDebug() << "Clipboard updated (Text): " << currentText;
-            emit changeText(currentText);
+            emit copyText(currentText);
         }
     }
 
@@ -85,7 +91,7 @@ void ClipboardMonitor::startClipboardSignals() {
         if (currentImage != lastClipboardImage) {
             lastClipboardImage = currentImage;
             qDebug() << "Clipboard updated (Image)";
-            emit changeImage(currentImage);
+            emit copyImage(currentImage);
             // Здесь можно вызывать свою функцию для обработки изображений
         }
     }
