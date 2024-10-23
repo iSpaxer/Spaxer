@@ -68,6 +68,7 @@ private:
     // QBluetoothLocalDevice *m_localDevice;
 
     void initFindedDevices();
+    void updateVisibility();
     bool checkOnUnicModel(const QStandardItemModel *model, const QString deviceBleName);
     QByteArray convertImageToByteArray(const QImage &image);
 };

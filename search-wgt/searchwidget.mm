@@ -22,6 +22,14 @@ SearchWidget::SearchWidget(QWidget *parent):
     m_clibBoardMonitor(new ClipboardMonitor(this)) {
     ui->setupUi(this);
 
+
+    // скрол
+    updateVisibility();
+    ui->scroll->setWidgetResizable(true);
+    ui->scroll->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    ui->scroll->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    ui->scroll->setSizeAdjustPolicy(QAbstractItemView::AdjustToContents);
+
     if (m_localDeviceIsServer) {
       m_bleServer = new BleServer(this);
     } else {
@@ -57,22 +65,27 @@ void SearchWidget::initFindedDevices() {
     ui->findedDevicesView->setItemDelegate(m_delegate);
     ui->findedDevicesView->setModel(m_modelByFindedDevices);
 
-    QScroller::grabGesture(ui->findedDevicesView, QScroller::LeftMouseButtonGesture);
+    // QScroller::grabGesture(ui->findedDevicesView, QScroller::LeftMouseButtonGesture);
 
-    QScroller *scroller = QScroller::scroller(ui->findedDevicesView);
-    QScrollerProperties props;
+    // QScroller *scroller = QScroller::scroller(ui->findedDevicesView);
+    // QScrollerProperties props;
 
-    // Настройки плавного скроллинга с инерцией
-    props.setScrollMetric(QScrollerProperties::ScrollingCurve, QEasingCurve(QEasingCurve::InOutQuad));
-    props.setScrollMetric(QScrollerProperties::DecelerationFactor, 0.05);  // Плавное замедление
-    props.setScrollMetric(QScrollerProperties::MaximumVelocity, 0.5);      // Ограничение максимальной скорости
-    props.setScrollMetric(QScrollerProperties::OvershootDragResistanceFactor, 0.3);  // Инерция за пределы
+    // // Настройки плавного скроллинга с инерцией
+    // props.setScrollMetric(QScrollerProperties::ScrollingCurve, QEasingCurve(QEasingCurve::InOutQuad));
+    // props.setScrollMetric(QScrollerProperties::DecelerationFactor, 0.05);  // Плавное замедление
+    // props.setScrollMetric(QScrollerProperties::MaximumVelocity, 0.5);      // Ограничение максимальной скорости
+    // props.setScrollMetric(QScrollerProperties::OvershootDragResistanceFactor, 0.3);  // Инерция за пределы
 
-    // Применяем настройки
-    scroller->setScrollerProperties(props);
+    // // Применяем настройки
+    // scroller->setScrollerProperties(props);
 
     connect(ui->findedDevicesView, &QListView::clicked, this, &SearchWidget::onItemClicked);
     connect(ui->devicesForConnection, &QListView::activated, this, &SearchWidget::onItemDoubleCLicked);
+}
+
+void SearchWidget::updateVisibility() {
+    // Скрываем или показываем ListView в зависимости от количества элементов
+    ui->findedDevicesView->setVisible(m_modelByFindedDevices->rowCount() > 0);
 }
 
 SearchWidget::~SearchWidget() {
@@ -131,14 +144,13 @@ void SearchWidget::onItemDoubleCLicked(const QModelIndex &index) {
 
 // найдено устройство
 void SearchWidget::deviceDiscovered(const QBluetoothDeviceInfo &device) {
-  if (!device.name().isEmpty() && device.name() != device.address().toString()) {
+  if (!device.name().isEmpty() && device.name() != device.address().toString()
+    && checkOnUnicModel(m_modelByFindedDevices, device.name())) {
     qDebug() << device.name();
-    // if (device.name() == "Spaxer") {
-    //   m_bleClient->connectToDevice(device);
-    // }
     BluetoothStandartItem *item1 = new BluetoothStandartItem(device.name(), device);
     item1->setData(NOT_CONNECTED, Qt::UserRole + 2);
-    m_modelByFindedDevices->appendRow(item1);\
+    m_modelByFindedDevices->appendRow(item1);
+    if (ui->findedDevicesView->isHidden()) ui->findedDevicesView->show();
   }
 }
 
@@ -150,7 +162,6 @@ void SearchWidget::activeLocalDeviceIsServer(bool isServer) {
   m_localDeviceIsServer = isServer;
   if (isServer) {
       if (!m_modelByConnectionDevice) m_modelByConnectionDevice = new QStandardItemModel(this);
-      ui->nameForActiveLocalDevice->setText("Подключенные устройства к серверу");
       ui->devicesForConnection->setModel(m_modelByConnectionDevice);
       if (m_bleClient) m_bleClient->deleteLater();
       if (!m_bleServer) {
@@ -160,7 +171,6 @@ void SearchWidget::activeLocalDeviceIsServer(bool isServer) {
           connect(m_bleServer, &BleServer::getData, m_clibBoardMonitor, &ClipboardMonitor::setData);
       }
   } else {
-      ui->nameForActiveLocalDevice->setText("Устройства для подключения");
       ui->devicesForConnection->setModel(m_modelByDevicesForConnection);
       if (m_bleServer) m_bleServer->deleteLater();
       if (!m_bleClient) m_bleClient = new BleClient(this);
