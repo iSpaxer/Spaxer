@@ -11,7 +11,12 @@
 #include <QList>
 #include <QDebug>
 
+#include <QStandardPaths>
+#include <QDir>
+
 #include <search-wgt/bluetoothstandartitem.h>
+#include <common/staticdata.h>
+
 
 class FileManager : public QObject
 {
@@ -19,8 +24,30 @@ class FileManager : public QObject
 public:
     explicit FileManager(QObject *parent = nullptr);
 
+
+
+    QString getDocumentsPath() {
+        QString documentsPath = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
+        return documentsPath;
+    }
+
+    QString getLibraryPath() {
+        QString libraryPath = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
+        return libraryPath;
+    }
+
+    QString getTemporaryPath() {
+        QString tempPath = QDir::tempPath();
+        return tempPath;
+    }
+
     void saveDeviceList(const QList<QBluetoothDeviceInfo> &devices) {
-        QFile file("devices.json");
+        QString filePath = "devices.json";
+        #ifdef Q_OS_IOS
+        filePath = getDocumentsPath() + "/" + filePath;
+        #endif
+
+        QFile file(filePath);
         if (!file.open(QIODevice::WriteOnly)) {
             qWarning() << "Could not open file for writing:" << file.errorString();
             return;
@@ -42,7 +69,12 @@ public:
     }
 
     QList<QBluetoothDeviceInfo> loadDeviceList() {
-        QFile file("devices.json");
+        QString filePath = "devices.json";
+        #ifdef Q_OS_IOS
+        filePath = getDocumentsPath() + "/" + filePath;
+        #endif
+
+        QFile file(filePath);
         QList<QBluetoothDeviceInfo> devices;
 
         if (!file.open(QIODevice::ReadOnly)) {
@@ -61,8 +93,27 @@ public:
                     QJsonObject jsonObject = value.toObject();
                     QString name = jsonObject["name"].toString();
                     QBluetoothAddress address(jsonObject["address"].toString());
-                    QBluetoothDeviceInfo deviceInfo(address, name, 0); // Создание устройства из адреса и имени
-                    devices.append(deviceInfo);
+                    QBluetoothUuid uuid(jsonObject["uuid"].toString());
+                    qDebug() <<" load: " << name << " " << address << " " << uuid.toString();
+
+                    int id = 0;
+                    if (!jsonObject["uuid"].isNull() && jsonObject["uuid"] == "{00000000-0000-0000-0000-000000000000}" && jsonObject["address"].toString().isEmpty()) {
+                        qDebug() << "невозможно подключиться uuid и адресс пусты";
+                        return devices;
+                    }
+                    qDebug() << jsonObject["uuid"].toString();
+                    if (jsonObject["uuid"] == "{00000000-0000-0000-0000-000000000000}" ) {
+                        qDebug() << "uuid пуст пробуем по MAC подключиться";
+                        QBluetoothDeviceInfo deviceInfo(address, name, id);
+                        devices.append(deviceInfo);
+                        continue;
+                    }
+                    if (jsonObject["uuid"] != "{00000000-0000-0000-0000-000000000000}" ) {
+                        qDebug() << "Пробуем uuid ";
+                        QBluetoothDeviceInfo deviceInfo(uuid, name, id);
+                        devices.append(deviceInfo);
+                        continue;
+                    }
                 }
             }
         }

@@ -6,7 +6,6 @@
 #include <QEasingCurve>
 #include <QBuffer>
 
-#include <common/BLEManager.h>
 // #include <IOBluetooth/IOBluetooth.h>
 
 const QString SearchWidget::CONNECT = "Подключено";
@@ -25,15 +24,17 @@ SearchWidget::SearchWidget(QWidget *parent):
     m_clibBoardMonitor(new ClipboardMonitor(this)) {
     ui->setupUi(this);
 
+    auto r = m_fileManager->loadDeviceList();
     // загрузка из файла
     for(auto deviceInfo: m_fileManager->loadDeviceList()) {
-        m_modelByDevicesForConnection->appendRow(new BluetoothStandartItem(deviceInfo.name(), deviceInfo));
+        auto item = new BluetoothStandartItem(deviceInfo.name(), deviceInfo);
+        item->setData("Неизвестно", Qt::UserRole + 2);
+        m_modelByDevicesForConnection->appendRow(item);
     }
     // QObject::connect(qApp, &QApplication::aboutToQuit, [&devices]() {
     //     saveDeviceList(devices);
     // });
-    BLEManager *ble_manager = new BLEManager();
-    qDebug() << ble_manager->getConnectedDevices();
+
 
     // скрол
     updateVisibility();
@@ -82,8 +83,6 @@ void SearchWidget::initFindedDevices() {
 }
 
 SearchWidget::~SearchWidget() {
-    delete ui;
-
     QList<QBluetoothDeviceInfo> itemList;
     // Проходим по всем строкам и столбцам модели
     for (int row = 0; row < m_modelByDevicesForConnection->rowCount(); ++row) {
@@ -93,6 +92,8 @@ SearchWidget::~SearchWidget() {
         }
     }
     m_fileManager->saveDeviceList(itemList);
+
+    delete ui;
 }
 
 void SearchWidget::updateVisibility() {
@@ -111,13 +112,14 @@ void SearchWidget::connectToDevices() {
     auto _item = m_modelByDevicesForConnection->item(row);
     const BluetoothStandartItem* item = dynamic_cast<BluetoothStandartItem*>(m_modelByDevicesForConnection->item(row));
     if (item) {
+        auto device = item->getDevice();
         if (m_bleClient) m_bleClient->connectToDevice(item->getDevice());
         qDebug() << "connecting to " << item->text();
     } else qDebug() << "не найден элемент для подключения...";
   }
 }
 
-// кладем вправо
+// кладем вниз
 void SearchWidget::onItemClicked(const QModelIndex &index) {
     // Извлекаем элемент по индексу
     if (!m_localDeviceIsServer) {
@@ -133,6 +135,9 @@ void SearchWidget::onItemClicked(const QModelIndex &index) {
             BluetoothStandartItem *_item = dynamic_cast<BluetoothStandartItem*>(m_modelByFindedDevices->itemFromIndex(index));
             if (_item) {
               auto item = new BluetoothStandartItem(_item);
+              auto device = item->getDevice();
+             qDebug() << device.name()  << " " << device.deviceUuid() << " " << device.address() << " " << device.majorDeviceClass() << " " << device.minorDeviceClass() << " " << device.serviceClasses() << " " << device.rssi() << " ";
+
               if (connect.isEmpty())
                   item->setData(NOT_CONNECTED, Qt::UserRole + 2);
               else
@@ -154,9 +159,10 @@ void SearchWidget::onItemDoubleCLicked(const QModelIndex &index) {
 void SearchWidget::deviceDiscovered(const QBluetoothDeviceInfo &device) {
   if (!device.name().isEmpty() && device.name() != device.address().toString()
     && checkOnUnicModel(m_modelByFindedDevices, device.name())) {
+
     qDebug() << device.name();
     BluetoothStandartItem *item1 = new BluetoothStandartItem(device.name(), device);
-    item1->setData(NOT_CONNECTED, Qt::UserRole + 2);
+qDebug() << device.name()  << " " << device.deviceUuid() << " " << device.address() << " " << device.majorDeviceClass() << " " << device.minorDeviceClass() << " " << device.serviceClasses() << " " << device.rssi() << " ";    item1->setData(NOT_CONNECTED, Qt::UserRole + 2);
     m_modelByFindedDevices->appendRow(item1);
     if (ui->findedDevicesView->isHidden()) ui->findedDevicesView->show();
   }
@@ -261,6 +267,7 @@ QByteArray SearchWidget::convertImageToByteArray(const QImage &image) {
 
 
 
+        // qDebug() << device.deviceUuid() << " " << device.address() << " " << device.majorDeviceClass() << " " << device.minorDeviceClass() << " " << device.serviceClasses() << " " << device.rssi() << " ";
 
 bool SearchWidget::checkOnUnicModel(const QStandardItemModel *model, const QString deviceBleName) {
     for (int row = 0; row < model->rowCount(); ++row) {

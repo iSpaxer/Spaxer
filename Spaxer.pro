@@ -10,7 +10,6 @@ CONFIG += c++17
 
 SOURCES += \
     # bluetooth/bleclient.cpp \
-    common/BLEManager.mm \
     common/bleserver.cpp \
     common/clipboardmonitor.cpp \
     common/filemanager.cpp \
@@ -28,7 +27,6 @@ SOURCES += \
 
 HEADERS += \
     # bluetooth/bleclient.h \
-    common/BLEManager.h \
     common/bleserver.h \
     common/clipboardmonitor.h \
     common/filemanager.h \
@@ -59,7 +57,7 @@ ios {
     QMAKE_CXXFLAGS += -fobjc-arc  # Включаем ARC (Automatic Reference Counting) для Objective-C++
     QMAKE_INFO_PLIST = $$PWD/macOs/Info.plist
     QMAKE_TARGET_BUNDLE_IDENTIFIER = com.mycompany.spaxer
-    LIBS += -framework CoreBluetooth -framework IOBluetooth
+    LIBS += -framework CoreBluetooth
 }
 # LIBS += -framework IOBluetooth
 macx {
