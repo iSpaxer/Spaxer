@@ -13,10 +13,4 @@ public:
 
 };
 
-
-
-
-
-
-
 #endif // STATICDATA_H

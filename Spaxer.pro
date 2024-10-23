@@ -14,7 +14,6 @@ SOURCES += \
     common/clipboardmonitor.cpp \
     common/mainwindow.cpp \
     common/staticdata.cpp \
-    frame.cpp \
     main-wgt/gradientbutton.cpp \
     main-wgt/mainwidget.cpp \
     main.cpp \
@@ -31,7 +30,6 @@ HEADERS += \
     common/clipboardmonitor.h \
     common/mainwindow.h \
     common/staticdata.h \
-    frame.h \
     main-wgt/gradientbutton.h \
     main-wgt/mainwidget.h \
     search-wgt/SearchWidget.h \
@@ -43,7 +41,6 @@ HEADERS += \
 
 FORMS += \
     common/mainwindow.ui \
-    frame.ui \
     main-wgt/mainwidget.ui \
     search-wgt/searchwidget.ui \
     settings-wgt/settingswidget.ui
