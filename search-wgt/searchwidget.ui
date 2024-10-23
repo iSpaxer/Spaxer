@@ -326,7 +326,10 @@ border: none;
             <bool>false</bool>
            </property>
            <property name="editTriggers">
-            <set>QAbstractItemView::EditTrigger::EditKeyPressed</set>
+            <set>QAbstractItemView::EditTrigger::NoEditTriggers</set>
+           </property>
+           <property name="showDropIndicator" stdset="0">
+            <bool>false</bool>
            </property>
           </widget>
          </item>
@@ -437,7 +440,7 @@ border: none;
 border-top-left-radius: 10px;  /* Закругление левого верхнего угла */
 border-top-right-radius: 10px; /* Закругление правого верхнего угла */
 border-bottom-left-radius: 10px;  /* Нижние углы остаются прямыми */
-border-bottom-right-radius: 0px;      
+border-bottom-right-radius: 10px;      
 }</string>
            </property>
            <property name="verticalScrollBarPolicy">
@@ -453,7 +456,10 @@ border-bottom-right-radius: 0px;
             <bool>false</bool>
            </property>
            <property name="editTriggers">
-            <set>QAbstractItemView::EditTrigger::EditKeyPressed</set>
+            <set>QAbstractItemView::EditTrigger::NoEditTriggers</set>
+           </property>
+           <property name="showDropIndicator" stdset="0">
+            <bool>false</bool>
            </property>
           </widget>
          </item>

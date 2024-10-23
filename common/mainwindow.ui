@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>380</width>
-    <height>650</height>
+    <height>660</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -56,7 +56,7 @@
       <property name="minimumSize">
        <size>
         <width>0</width>
-        <height>0</height>
+        <height>600</height>
        </size>
       </property>
       <property name="styleSheet">
@@ -75,13 +75,13 @@
       <property name="minimumSize">
        <size>
         <width>380</width>
-        <height>50</height>
+        <height>40</height>
        </size>
       </property>
       <property name="maximumSize">
        <size>
         <width>16777215</width>
-        <height>40</height>
+        <height>16777215</height>
        </size>
       </property>
       <property name="sizeIncrement">
@@ -98,7 +98,7 @@
         <number>0</number>
        </property>
        <property name="bottomMargin">
-        <number>12</number>
+        <number>6</number>
        </property>
        <item>
         <widget class="QPushButton" name="searchButton">

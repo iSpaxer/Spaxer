@@ -34,8 +34,12 @@ void SearchItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &op
     }
 
     painter->setPen(QPen(Qt::white, 1));
-    painter->drawLine(option.rect.adjusted(leftPadding, 0, 0, 0).bottomLeft(),
-                      option.rect.bottomRight());
+    QPoint bottomLeft = option.rect.adjusted(leftPadding, 0, 0, 0).bottomLeft();
+    QPoint bottomRight = option.rect.bottomRight();
+
+    // Опускаем линию на 1 пиксель вниз
+    painter->drawLine(bottomLeft.x(), bottomLeft.y() + 2, // Опускаем Y на 1
+                      bottomRight.x(), bottomRight.y() + 2); // Опускаем Y на 1
 
     painter->restore();
 }
