@@ -13,6 +13,7 @@
 #include <QBluetoothLocalDevice>
 
 #include <common/clipboardmonitor.h>
+#include <common/filemanager.h>
 
 
 namespace Ui {
@@ -62,10 +63,13 @@ private:
     QStandardItemModel *m_modelByConnectionDevice;
     QBluetoothDeviceDiscoveryAgent *m_discoveryAgent;
 
+    FileManager *m_fileManager;
     BleClient *m_bleClient;
     BleServer *m_bleServer;
     ClipboardMonitor *m_clibBoardMonitor;
     // QBluetoothLocalDevice *m_localDevice;
+
+    QLowEnergyController* m_controller;
 
     void initFindedDevices();
     void updateVisibility();

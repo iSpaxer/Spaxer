@@ -5,6 +5,8 @@
 #include <QScroller>
 #include <QEasingCurve>
 #include <QBuffer>
+
+#include <common/BLEManager.h>
 // #include <IOBluetooth/IOBluetooth.h>
 
 const QString SearchWidget::CONNECT = "Подключено";
@@ -17,11 +19,21 @@ SearchWidget::SearchWidget(QWidget *parent):
     m_modelByFindedDevices(new QStandardItemModel(this)),
     m_modelByDevicesForConnection(new QStandardItemModel(this)),
     m_discoveryAgent(new QBluetoothDeviceDiscoveryAgent(this)),
+    m_fileManager(new FileManager(this)),
     m_bleClient(nullptr),
     m_bleServer(nullptr),
     m_clibBoardMonitor(new ClipboardMonitor(this)) {
     ui->setupUi(this);
 
+    // загрузка из файла
+    for(auto deviceInfo: m_fileManager->loadDeviceList()) {
+        m_modelByDevicesForConnection->appendRow(new BluetoothStandartItem(deviceInfo.name(), deviceInfo));
+    }
+    // QObject::connect(qApp, &QApplication::aboutToQuit, [&devices]() {
+    //     saveDeviceList(devices);
+    // });
+    BLEManager *ble_manager = new BLEManager();
+    qDebug() << ble_manager->getConnectedDevices();
 
     // скрол
     updateVisibility();
@@ -65,31 +77,27 @@ void SearchWidget::initFindedDevices() {
     ui->findedDevicesView->setItemDelegate(m_delegate);
     ui->findedDevicesView->setModel(m_modelByFindedDevices);
 
-    // QScroller::grabGesture(ui->findedDevicesView, QScroller::LeftMouseButtonGesture);
-
-    // QScroller *scroller = QScroller::scroller(ui->findedDevicesView);
-    // QScrollerProperties props;
-
-    // // Настройки плавного скроллинга с инерцией
-    // props.setScrollMetric(QScrollerProperties::ScrollingCurve, QEasingCurve(QEasingCurve::InOutQuad));
-    // props.setScrollMetric(QScrollerProperties::DecelerationFactor, 0.05);  // Плавное замедление
-    // props.setScrollMetric(QScrollerProperties::MaximumVelocity, 0.5);      // Ограничение максимальной скорости
-    // props.setScrollMetric(QScrollerProperties::OvershootDragResistanceFactor, 0.3);  // Инерция за пределы
-
-    // // Применяем настройки
-    // scroller->setScrollerProperties(props);
-
     connect(ui->findedDevicesView, &QListView::clicked, this, &SearchWidget::onItemClicked);
     connect(ui->devicesForConnection, &QListView::activated, this, &SearchWidget::onItemDoubleCLicked);
+}
+
+SearchWidget::~SearchWidget() {
+    delete ui;
+
+    QList<QBluetoothDeviceInfo> itemList;
+    // Проходим по всем строкам и столбцам модели
+    for (int row = 0; row < m_modelByDevicesForConnection->rowCount(); ++row) {
+        BluetoothStandartItem *item = dynamic_cast<BluetoothStandartItem*>(m_modelByDevicesForConnection->item(row));
+        if (item) {
+            itemList.append(item->getDevice());
+        }
+    }
+    m_fileManager->saveDeviceList(itemList);
 }
 
 void SearchWidget::updateVisibility() {
     // Скрываем или показываем ListView в зависимости от количества элементов
     ui->findedDevicesView->setVisible(m_modelByFindedDevices->rowCount() > 0);
-}
-
-SearchWidget::~SearchWidget() {
-    delete ui;
 }
 
 void SearchWidget::enableServer(bool isEnable) {
@@ -250,6 +258,8 @@ QByteArray SearchWidget::convertImageToByteArray(const QImage &image) {
         return QByteArray();  // Пустой QByteArray для ошибки
     }
 }
+
+
 
 
 bool SearchWidget::checkOnUnicModel(const QStandardItemModel *model, const QString deviceBleName) {

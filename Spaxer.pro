@@ -10,8 +10,10 @@ CONFIG += c++17
 
 SOURCES += \
     # bluetooth/bleclient.cpp \
+    common/BLEManager.mm \
     common/bleserver.cpp \
     common/clipboardmonitor.cpp \
+    common/filemanager.cpp \
     common/mainwindow.cpp \
     common/staticdata.cpp \
     main-wgt/gradientbutton.cpp \
@@ -26,8 +28,10 @@ SOURCES += \
 
 HEADERS += \
     # bluetooth/bleclient.h \
+    common/BLEManager.h \
     common/bleserver.h \
     common/clipboardmonitor.h \
+    common/filemanager.h \
     common/mainwindow.h \
     common/staticdata.h \
     main-wgt/gradientbutton.h \
@@ -52,15 +56,16 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 # QMAKE_INFO_PLIST = $$PWD/macOs/Info.plist
 ios {
+    QMAKE_CXXFLAGS += -fobjc-arc  # Включаем ARC (Automatic Reference Counting) для Objective-C++
     QMAKE_INFO_PLIST = $$PWD/macOs/Info.plist
     QMAKE_TARGET_BUNDLE_IDENTIFIER = com.mycompany.spaxer
-    LIBS += -framework CoreBluetooth
+    LIBS += -framework CoreBluetooth -framework IOBluetooth
 }
 # LIBS += -framework IOBluetooth
 macx {
+    QMAKE_CXXFLAGS += -fobjc-arc  # Включаем ARC (Automatic Reference Counting) для Objective-C++
     QMAKE_INFO_PLIST = $$PWD/macOs/Info.plist
-
-    # LIBS += -framework IOBluetooth
+    LIBS += -framework CoreBluetooth -framework IOBluetooth
 }
 
 DISTFILES += \
