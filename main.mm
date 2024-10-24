@@ -4,10 +4,12 @@
 #include <QBluetoothPermission>
 #include <QCoreApplication>
 #include <QPermission>
+// #include <QPlatformNativeInterface>
 
 // Включите необходимый заголовок для работы с iOS
 #ifdef Q_OS_IOS
 #import <UIKit/UIKit.h>
+
 
 // Функция для предотвращения отключения экрана
 void preventScreenLock() {
@@ -17,6 +19,14 @@ void preventScreenLock() {
 // Функция для разрешения отключения экрана
 void allowScreenLock() {
     [[UIApplication sharedApplication] setIdleTimerDisabled:NO];
+}
+
+void configureWindowForFullscreen() {
+    UIWindow *window = [UIApplication sharedApplication].keyWindow;
+    if (@available(iOS 11.0, *)) {
+        window.rootViewController.view.insetsLayoutMarginsFromSafeArea = NO;
+        window.rootViewController.additionalSafeAreaInsets = UIEdgeInsetsZero;
+    }
 }
 #endif
 
@@ -49,9 +59,10 @@ int main(int argc, char *argv[]) {
     #ifdef Q_OS_IOS
     requestBluetoothPermission(app);
     preventScreenLock();
+    configureWindowForFullscreen();
     #endif
 
     MainWindow w;
-    w.show();
+    w.showFullScreen();
     return app.exec();
 }

@@ -7,15 +7,18 @@
 	<key>CFBundleExecutable</key>
 	<string>Spaxer</string>
 	<key>CFBundleIcons</key>
-	<dict>
+<!--	<dict>
 		<key>CFBundlePrimaryIcon</key>
 		<dict>
 			<key>CFBundleIconFiles</key>
 			<array>
-				<string>AppIcon60x60</string>
+				<string>AppIcon</string>
 			</array>
 		</dict>
-	</dict>
+        </dict>-->
+        <key>XSAppIconAssets</key>
+        <string>AppIcons/Asset.xcassets</string>
+
 	<key>CFBundleIdentifier</key>
 	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 	<key>CFBundleInfoDictionaryVersion</key>
@@ -53,6 +56,12 @@
 		<string>UIInterfaceOrientationPortrait</string>
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
+	</array>
+	<key>UIViewControllerBasedStatusBarAppearance</key>
+	<true/>
+	<key>UTImportedTypeDeclarations</key>
+	<array>
+		<dict/>
 	</array>
 </dict>
 </plist>

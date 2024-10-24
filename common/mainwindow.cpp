@@ -1,6 +1,5 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-
 #include <QLabel>
 #include <QMovie>
 
@@ -11,6 +10,7 @@ MainWindow::MainWindow(QWidget *parent):
     m_mainWidget(new MainWidget),
     m_settingsWidget(new SettingsWidget),
     m_activeButtonStatusBar(nullptr) {
+
     ui->setupUi(this);
 
     init();

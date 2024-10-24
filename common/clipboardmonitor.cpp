@@ -13,7 +13,7 @@ ClipboardMonitor::ClipboardMonitor(QObject *parent)
 }
 
 void ClipboardMonitor::setText(const QString &text) {
-    if (checkRepeatText(text)) {
+    if (!checkRepeatText(text)) {
         QApplication::clipboard()->setText(text);
     }
 }

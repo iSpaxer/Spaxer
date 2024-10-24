@@ -1,5 +1,6 @@
 QT       += core gui bluetooth
 
+
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 CONFIG += c++17
@@ -53,7 +54,19 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 # QMAKE_INFO_PLIST = $$PWD/macOs/Info.plist
+
+# icons_folder = $$PWD/AppIcons
 ios {
+    # source_folder = $$PWD/AppIcons
+    # # Укажите путь, куда нужно скопировать папку в каталоге сборки
+    # build_folder = $$OUT_PWD
+
+    # # Определите правило копирования
+    # QMAKE_POST_LINK += cp -r $$source_folder $$build_folder
+
+    # XCODE_RESOURCES += $$OUT_PWD/AppIcons
+
+    QT += gui-private
     QMAKE_CXXFLAGS += -fobjc-arc  # Включаем ARC (Automatic Reference Counting) для Objective-C++
     QMAKE_INFO_PLIST = $$PWD/macOs/Info.plist
     QMAKE_TARGET_BUNDLE_IDENTIFIER = com.mycompany.spaxer
@@ -61,6 +74,7 @@ ios {
 }
 # LIBS += -framework IOBluetooth
 macx {
+    XCODE_RESOURCES += $$icons_folder
     QMAKE_CXXFLAGS += -fobjc-arc  # Включаем ARC (Automatic Reference Counting) для Objective-C++
     QMAKE_INFO_PLIST = $$PWD/macOs/Info.plist
     LIBS += -framework CoreBluetooth -framework IOBluetooth
@@ -68,7 +82,10 @@ macx {
 
 DISTFILES += \
     macOs/Info.plist \
-    search.png
+    search.png \
 
 RESOURCES += \
     resources.qrc
+
+# Определите правило копирования
+# QMAKE_POST_LINK += cp -r $$source_folder $$build_folder

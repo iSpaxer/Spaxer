@@ -12,39 +12,47 @@ BleServer::BleServer(QObject *parent): QObject(parent),
 }
 
 void BleServer::start() {
-    qDebug() << "start Server";
-    serviceData.setType(QLowEnergyServiceData::ServiceTypePrimary);
+    if (m_start) {
+        m_start = false;
+        qDebug() << "start Server";
+        serviceData.setType(QLowEnergyServiceData::ServiceTypePrimary);
 
-    // Задаем уникальный UUID для сервиса (можно использовать SerialPort, но лучше задать свой)
-    serviceData.setUuid(QBluetoothUuid(uuid)); // Пример уникального UUID сервиса
+        // Задаем уникальный UUID для сервиса (можно использовать SerialPort, но лучше задать свой)
+        serviceData.setUuid(QBluetoothUuid(uuid)); // Пример уникального UUID сервиса
 
-    // Создаем данные для характеристики
-    charData.setUuid(QBluetoothUuid(charUuid)); // Пример уникального UUID характеристики
-    charData.setProperties(QLowEnergyCharacteristic::Indicate | QLowEnergyCharacteristic::Write);
-    charData.setValue(QByteArray(2, 0)); // Стартовое значение
+        // Создаем данные для характеристики
+        charData.setUuid(QBluetoothUuid(charUuid)); // Пример уникального UUID характеристики
+        charData.setProperties(QLowEnergyCharacteristic::Indicate | QLowEnergyCharacteristic::Write);
+        charData.setValue(QByteArray(2, 0)); // Стартовое значение
 
-    // Добавляем характеристику в сервис
-    serviceData.addCharacteristic(charData);
+        // Добавляем дескриптор CCCD для уведомлений и индикаций
+        // QLowEnergyDescriptorData clientConfig(QBluetoothUuid::DescriptorType::ClientCharacteristicConfiguration, QByteArray(2, 0));
+        // charData.addDescriptor(clientConfig);
 
-    // Создаем контроллер BLE и сервис
-    controller = QLowEnergyController::createPeripheral(this);
-    service = controller->addService(serviceData);
+        // Добавляем характеристику в сервис
+        serviceData.addCharacteristic(charData);
 
-    // Настройка рекламных данных
-    QLowEnergyAdvertisingData advertisingData;
-    advertisingData.setDiscoverability(QLowEnergyAdvertisingData::DiscoverabilityGeneral);
-    advertisingData.setIncludePowerLevel(true);
-    advertisingData.setLocalName("BLE_Server");
-    advertisingData.setServices(QList<QBluetoothUuid>() << QBluetoothUuid(uuid)); // Тот же UUID сервиса хз но можно и неодинаково
+        // Создаем контроллер BLE и сервис
+        controller = QLowEnergyController::createPeripheral(this);
+        service = controller->addService(serviceData);
 
-    // Подключение сигналов
-    connect(controller, &QLowEnergyController::connected, this, &BleServer::deviceConnected);
-    connect(controller, &QLowEnergyController::disconnected, this, &BleServer::deviceDisconnected);
-    connect(service, &QLowEnergyService::characteristicChanged, this, &BleServer::characteristicChanged);
+        // Настройка рекламных данных
+        QLowEnergyAdvertisingData advertisingData;
+        advertisingData.setDiscoverability(QLowEnergyAdvertisingData::DiscoverabilityGeneral);
+        advertisingData.setIncludePowerLevel(true);
+        advertisingData.setLocalName("BLE_Server");
+        advertisingData.setServices(QList<QBluetoothUuid>() << QBluetoothUuid(uuid)); // Тот же UUID сервиса хз но можно и неодинаково
 
-    // Запуск рекламы
-    controller->startAdvertising(QLowEnergyAdvertisingParameters(), advertisingData, advertisingData);
-    qDebug() << "Advertising started!";
+        // Подключение сигналов
+        connect(controller, &QLowEnergyController::connected, this, &BleServer::deviceConnected);
+        connect(controller, &QLowEnergyController::disconnected, this, &BleServer::deviceDisconnected);
+        connect(service, &QLowEnergyService::characteristicChanged, this, &BleServer::characteristicChanged);
+
+        // Запуск рекламы
+        controller->startAdvertising(QLowEnergyAdvertisingParameters(), advertisingData, advertisingData);
+        qDebug() << "Advertising started!";
+    }
+
 }
 
 void BleServer::deviceConnected() {
@@ -103,10 +111,36 @@ void BleServer::sendNotification(const QByteArray &data) {
 }
 
 void BleServer::sendNotificationStr(const QString &data) {
-    const QLowEnergyCharacteristic characteristic = service->characteristic(QBluetoothUuid(charUuid)); // Замените на ваш UUID характеристики
+    const QLowEnergyCharacteristic characteristic = service->characteristic(QBluetoothUuid(charUuid));
+    if (characteristic.isValid()) {
+        service->writeCharacteristic(characteristic, data.toUtf8());
+        qDebug() << "Notification sent:" << data;
+    } else {
+        qDebug() << "Invalid characteristic!";
+    }
+    // const QLowEnergyCharacteristic characteristic = service->characteristic(QBluetoothUuid(charUuid)); // Замените на ваш UUID характеристики
 
-    // QByteArray valueToSend = QByteArray::fromHex("01");
-    QString text2 = "heh";
-    service->writeCharacteristic(characteristic, text2.toUtf8());
-    qDebug() << "NotificationStr sent:" << text2;
+    // if (!characteristic.isValid()) {
+    //     qDebug() << "Invalid characteristic!";
+    //     // return;
+    // }
+
+    // // Проверяем, что дескриптор для уведомлений установлен
+    // const QLowEnergyDescriptor notificationDesc = characteristic.descriptor(QBluetoothUuid::DescriptorType::ClientCharacteristicConfiguration);
+    // if (!notificationDesc.isValid()) {
+    //     qDebug() << "Notification descriptor not found!";
+    //     // return;
+    // }
+
+    // // Проверяем, что клиент подписан на уведомления
+    // if (notificationDesc.value() == QByteArray::fromHex("0000")) {
+    //     qDebug() << "Client is not subscribed to notifications!";
+    //     // return;
+    // }
+
+    // QByteArray dataToSend = QByteArray::fromHex(data.toStdString().c_str());
+    // service->writeCharacteristic(characteristic, dataToSend);
+    // // QString text2 = "heh";
+    // // service->writeCharacteristic(characteristic, text2.toUtf8());
+    // // qDebug() << "NotificationStr sent:" << text2;
 }

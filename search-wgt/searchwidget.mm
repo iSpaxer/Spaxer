@@ -191,7 +191,6 @@ void SearchWidget::createBleServer() {
     connect(m_bleServer, &BleServer::getData, m_clibBoardMonitor, &ClipboardMonitor::setData);
 }
 
-
 // меняем тип устройства - сервер или клиент
 void SearchWidget::activeLocalDeviceIsServer(bool isServer) {
   emit successConnect(false); // сбрасываем индикатор
