@@ -31,12 +31,13 @@ signals:
 private:
     QClipboard *clipboard;
     QTimer *timer;
-    QString lastClipboardText;
+    QString m_bufferText;
     QImage lastClipboardImage;
     QList<QUrl> lastClipboardUrls;
 
     void startClipboardTimer();
     void startClipboardSignals();
+    bool checkRepeatText(const QString &text);
 };
 
 

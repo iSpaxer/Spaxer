@@ -31,6 +31,13 @@ MainWidget::~MainWidget() {
     delete ui;
 }
 
+void MainWidget::successConnect(bool success) {
+    if (success)
+        ui->indicator->setStyleSheet("background: rgb(0, 214, 17); border-radius: 10px;");
+    else
+        ui->indicator->setStyleSheet("background: red; border-radius: 10px;");
+}
+
 void MainWidget::activeServer() {
     ui->connectButton->hide();
     ui->onServerButton->show();

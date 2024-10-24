@@ -17,7 +17,7 @@ SOURCES += \
     common/staticdata.cpp \
     main-wgt/gradientbutton.cpp \
     main-wgt/mainwidget.cpp \
-    main.cpp \
+    main.mm \
     search-wgt/bleclient.cpp \
     search-wgt/bluetoothstandartitem.cpp \
     search-wgt/searchitemdelegate.cpp \

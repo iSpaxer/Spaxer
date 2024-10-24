@@ -5,6 +5,21 @@
 #include <QCoreApplication>
 #include <QPermission>
 
+// Включите необходимый заголовок для работы с iOS
+#ifdef Q_OS_IOS
+#import <UIKit/UIKit.h>
+
+// Функция для предотвращения отключения экрана
+void preventScreenLock() {
+    [[UIApplication sharedApplication] setIdleTimerDisabled:YES];
+}
+
+// Функция для разрешения отключения экрана
+void allowScreenLock() {
+    [[UIApplication sharedApplication] setIdleTimerDisabled:NO];
+}
+#endif
+
 void requestBluetoothPermission(QApplication &app) {
     // Создание объекта разрешений для Bluetooth
     QBluetoothPermission permission;
@@ -33,6 +48,7 @@ int main(int argc, char *argv[]) {
 
     #ifdef Q_OS_IOS
     requestBluetoothPermission(app);
+    preventScreenLock();
     #endif
 
     MainWindow w;

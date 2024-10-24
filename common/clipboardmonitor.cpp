@@ -2,7 +2,7 @@
 
 
 ClipboardMonitor::ClipboardMonitor(QObject *parent)
-    : QObject(parent), lastClipboardText(""), lastClipboardImage(), lastClipboardUrls() {
+    : QObject(parent), m_bufferText(""), lastClipboardImage() {
     clipboard = QApplication::clipboard();
 
     #ifdef Q_OS_MAC
@@ -13,7 +13,9 @@ ClipboardMonitor::ClipboardMonitor(QObject *parent)
 }
 
 void ClipboardMonitor::setText(const QString &text) {
-    QApplication::clipboard()->setText(text);
+    if (checkRepeatText(text)) {
+        QApplication::clipboard()->setText(text);
+    }
 }
 
 void ClipboardMonitor::setImage(const QImage &image) {
@@ -32,8 +34,7 @@ void ClipboardMonitor::checkClipboardTimer() {
     // Проверяем текст
     if (mimeData->hasText()) {
         QString currentText = mimeData->text();
-        if (currentText != lastClipboardText) {
-            lastClipboardText = currentText;
+        if (!checkRepeatText(currentText) && !currentText.isEmpty()) {
             qDebug() << "Clipboard updated (Text): " << currentText;
             emit copyText(currentText);
             // Здесь можно вызывать свою функцию для обработки текста
@@ -78,8 +79,7 @@ void ClipboardMonitor::startClipboardSignals() {
     // Проверяем текст
     if (mimeData->hasText()) {
         QString currentText = mimeData->text();
-        if (currentText != lastClipboardText) {
-            lastClipboardText = currentText;
+        if (!checkRepeatText(currentText)) {
             qDebug() << "Clipboard updated (Text): " << currentText;
             emit copyText(currentText);
         }
@@ -95,4 +95,13 @@ void ClipboardMonitor::startClipboardSignals() {
             // Здесь можно вызывать свою функцию для обработки изображений
         }
     }
+}
+
+// текст повторяется?
+bool ClipboardMonitor::checkRepeatText(const QString &text) {
+    if (m_bufferText == text) {
+        return true;
+    }
+    m_bufferText = text;
+    return false;
 }

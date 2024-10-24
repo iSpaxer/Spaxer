@@ -18,10 +18,6 @@ class BleClient : public QObject
 public:
     explicit BleClient(QObject *parent = nullptr);
 
-signals:
-    void connected();
-    void disconnected();
-
 public slots:
     void connectToDevice(const QBluetoothDeviceInfo &device);
     void deviceConnected();
@@ -32,6 +28,13 @@ public slots:
     void sendMessage(const QByteArray &message);
     void characteristicChanged(const QLowEnergyCharacteristic &characteristic, const QByteArray &value);
     void deviceDisconnected();
+
+signals:
+    void successConnect(bool success);
+    void connected();
+    void disconnected();
+
+    void getText(const QString &text);
 
 private:
     QLowEnergyController *controller = nullptr;

@@ -22,13 +22,16 @@ public:
 
 public slots:
     void start();
+    void sendNotification(const QByteArray &data);
+    void sendNotificationStr(const QString &data);
+
 private slots:
     void deviceConnected();
     void deviceDisconnected();
     void characteristicChanged(const QLowEnergyCharacteristic &characteristic, const QByteArray &newValue);
-    void sendNotification(const QByteArray &data);
 
 signals:
+    void successConnect(bool success);
     void getText(const QString &text);
     void getImage(const QImage &image);
     void getData(const QByteArray &data);

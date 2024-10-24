@@ -24,17 +24,12 @@ SearchWidget::SearchWidget(QWidget *parent):
     m_clibBoardMonitor(new ClipboardMonitor(this)) {
     ui->setupUi(this);
 
-    auto r = m_fileManager->loadDeviceList();
     // загрузка из файла
     for(auto deviceInfo: m_fileManager->loadDeviceList()) {
         auto item = new BluetoothStandartItem(deviceInfo.name(), deviceInfo);
         item->setData("Неизвестно", Qt::UserRole + 2);
         m_modelByDevicesForConnection->appendRow(item);
     }
-    // QObject::connect(qApp, &QApplication::aboutToQuit, [&devices]() {
-    //     saveDeviceList(devices);
-    // });
-
 
     // скрол
     updateVisibility();
@@ -43,12 +38,11 @@ SearchWidget::SearchWidget(QWidget *parent):
     ui->scroll->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     ui->scroll->setSizeAdjustPolicy(QAbstractItemView::AdjustToContents);
 
+    // создание клинта или сервера
     if (m_localDeviceIsServer) {
-      m_bleServer = new BleServer(this);
+      createBleServer();
     } else {
-      m_bleClient = new BleClient(this);
-      connect(m_bleClient, &BleClient::connected, this, &SearchWidget::connectedBluetooth);
-      connect(m_bleClient, &BleClient::disconnected, this, &SearchWidget::disconnectedBluetooth);
+      createBleClient();
     }
 
     initFindedDevices();
@@ -71,7 +65,7 @@ SearchWidget::SearchWidget(QWidget *parent):
     connect(m_clibBoardMonitor, &ClipboardMonitor::copyText, this, &SearchWidget::sendMessageStr);
     connect(m_clibBoardMonitor, &ClipboardMonitor::copyImage, this, &SearchWidget::sendMessageImage);
 
-    // получение с клиента данных и запись их в буффер обмена
+
 }
 
 void SearchWidget::initFindedDevices() {
@@ -109,7 +103,6 @@ void SearchWidget::enableServer(bool isEnable) {
 
 void SearchWidget::connectToDevices() {
   for (int row = 0; row < m_modelByDevicesForConnection->rowCount(); ++row) {
-    auto _item = m_modelByDevicesForConnection->item(row);
     const BluetoothStandartItem* item = dynamic_cast<BluetoothStandartItem*>(m_modelByDevicesForConnection->item(row));
     if (item) {
         auto device = item->getDevice();
@@ -169,25 +162,58 @@ qDebug() << device.name()  << " " << device.deviceUuid() << " " << device.addres
 }
 
 void SearchWidget::scanFinished() {
-  ui->doFindButton->setText("Начать поиск");
+    ui->doFindButton->setText("Начать поиск");
 }
 
+void SearchWidget::createBleClient() {
+    m_bleClient = new BleClient(this);
+    connect(m_bleClient, &BleClient::connected, this, &SearchWidget::connectedBluetooth);
+    connect(m_bleClient, &BleClient::disconnected, this, &SearchWidget::disconnectedBluetooth);
+
+    // работа с индикатором
+    connect(m_bleClient, &BleClient::successConnect, this, &SearchWidget::successConnect);
+    // работа с получегием данных от сервера
+    connect(m_bleClient, &BleClient::getText, m_clibBoardMonitor, &ClipboardMonitor::setText);
+}
+
+void SearchWidget::createBleServer() {
+    m_bleServer = new BleServer(this);
+    m_bleServer->start();
+    // работа с индикатором
+    connect(m_bleServer, &BleServer::successConnect, this, &SearchWidget::successConnect);
+
+    // работа с отправой данных на клиента
+    connect(m_clibBoardMonitor, &ClipboardMonitor::copyText, m_bleServer, &BleServer::sendNotificationStr);
+
+    // получение данных с клиента
+    connect(m_bleServer, &BleServer::getText, m_clibBoardMonitor, &ClipboardMonitor::setText);
+    connect(m_bleServer, &BleServer::getImage, m_clibBoardMonitor, &ClipboardMonitor::setImage);
+    connect(m_bleServer, &BleServer::getData, m_clibBoardMonitor, &ClipboardMonitor::setData);
+}
+
+
+// меняем тип устройства - сервер или клиент
 void SearchWidget::activeLocalDeviceIsServer(bool isServer) {
+  emit successConnect(false); // сбрасываем индикатор
   m_localDeviceIsServer = isServer;
   if (isServer) {
       if (!m_modelByConnectionDevice) m_modelByConnectionDevice = new QStandardItemModel(this);
       ui->devicesForConnection->setModel(m_modelByConnectionDevice);
-      if (m_bleClient) m_bleClient->deleteLater();
+      sendMessageStr("ZGlzY29ubmVjdA=="); // disconnect = ZGlzY29ubmVjdA== Y29ubmVjdA== - connect
+      if (m_bleClient) {
+          delete m_bleClient;
+      }
       if (!m_bleServer) {
-          m_bleServer = new BleServer(this);
-          connect(m_bleServer, &BleServer::getText, m_clibBoardMonitor, &ClipboardMonitor::setText);
-          connect(m_bleServer, &BleServer::getImage, m_clibBoardMonitor, &ClipboardMonitor::setImage);
-          connect(m_bleServer, &BleServer::getData, m_clibBoardMonitor, &ClipboardMonitor::setData);
+          createBleServer();
       }
   } else {
       ui->devicesForConnection->setModel(m_modelByDevicesForConnection);
-      if (m_bleServer) m_bleServer->deleteLater();
-      if (!m_bleClient) m_bleClient = new BleClient(this);
+      m_bleServer->sendNotificationStr("ZGlzY29ubmVjdA==");
+      if (m_bleServer) {
+          delete m_bleServer;
+      }
+      if (!m_bleClient)
+          createBleClient();
   }
 }
 

@@ -16,6 +16,9 @@ public:
     explicit MainWidget(QWidget *parent = nullptr);
     ~MainWidget();
 
+public slots:
+    void successConnect(bool success);
+
 private slots:
     void activeServer();
     void activeClient();

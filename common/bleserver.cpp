@@ -23,9 +23,6 @@ void BleServer::start() {
     charData.setProperties(QLowEnergyCharacteristic::Indicate | QLowEnergyCharacteristic::Write);
     charData.setValue(QByteArray(2, 0)); // Стартовое значение
 
-    // QLowEnergyDescriptorData clientConfig(QBluetoothUuid::DescriptorType::ClientCharacteristicConfiguration, QByteArray(2, 0));
-    // charData.addDescriptor(clientConfig);
-
     // Добавляем характеристику в сервис
     serviceData.addCharacteristic(charData);
 
@@ -52,6 +49,7 @@ void BleServer::start() {
 
 void BleServer::deviceConnected() {
     qDebug() << "Client connected!";
+    emit successConnect(true);
     QThread a;
     a.sleep(1);
     sendNotification("Send from server");
@@ -59,8 +57,10 @@ void BleServer::deviceConnected() {
 
 void BleServer::deviceDisconnected() {
     qDebug() << "Client disconnected!";
+    emit successConnect(false);
 }
 
+// данные от клиента
 void BleServer::characteristicChanged(const QLowEnergyCharacteristic &characteristic, const QByteArray &data) {
     qDebug() << "Received data from client:" << data;
 
@@ -68,6 +68,13 @@ void BleServer::characteristicChanged(const QLowEnergyCharacteristic &characteri
     if (!dataText.isEmpty() && !dataText.contains(QChar::ReplacementCharacter)) {
         // Это текст, закодированный в UTF-8
         qDebug() << "QByteArray содержит текст: " << dataText;
+        if (dataText == "Y29ubmVjdA==") {
+            emit successConnect(true);
+            return;
+        } if (dataText == "ZGlzY29ubmVjdA==") {
+            emit successConnect(false);
+            return;
+        }
         emit getText(dataText);
         return;
     }
@@ -86,11 +93,20 @@ void BleServer::characteristicChanged(const QLowEnergyCharacteristic &characteri
     }
 }
 
+// отправляем клиенту
 void BleServer::sendNotification(const QByteArray &data) {
     // Отправляем индикацию
     const QLowEnergyCharacteristic characteristic = service->characteristic(QBluetoothUuid(charUuid)); // Замените на ваш UUID характеристики
 
-    QByteArray valueToSend = QByteArray::fromHex("01");
     service->writeCharacteristic(characteristic, data);
-    qDebug() << "Notification sent:" << data;
+    qDebug() << "Notification byte sent:" << data;
+}
+
+void BleServer::sendNotificationStr(const QString &data) {
+    const QLowEnergyCharacteristic characteristic = service->characteristic(QBluetoothUuid(charUuid)); // Замените на ваш UUID характеристики
+
+    // QByteArray valueToSend = QByteArray::fromHex("01");
+    QString text2 = "heh";
+    service->writeCharacteristic(characteristic, text2.toUtf8());
+    qDebug() << "NotificationStr sent:" << text2;
 }

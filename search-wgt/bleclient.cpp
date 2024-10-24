@@ -73,11 +73,8 @@ void BleClient::serviceStateChanged(QLowEnergyService::ServiceState newState) {
         // Подписываемся на уведомления, записывая 0x01 в CCCD
         service->writeDescriptor(cccd, QByteArray::fromHex("0100"));
         qDebug() << "Subscribed to notifications!";
-
-        // Подключаемся к сигналу characteristicChanged, чтобы получать уведомления
-        // connect(service, &QLowEnergyService::characteristicChanged, this, &BleClient::characteristicChanged);
-
-
+        emit successConnect(true);
+        sendMessage("Y29ubmVjdA==");
     }
 }
 
@@ -87,10 +84,25 @@ void BleClient::sendMessage(const QByteArray &message) {
     }
 }
 
-void BleClient::characteristicChanged(const QLowEnergyCharacteristic &characteristic, const QByteArray &value) {
-    qDebug() << "Received confirmation from server:" << QString::fromUtf8(value);
+// обрабатываем полученные данные с сервера
+void BleClient::characteristicChanged(const QLowEnergyCharacteristic &characteristic, const QByteArray &data) {
+    qDebug() << "Получены данные с сервера:" << QString::fromUtf8(data);
+
+    const QString dataText = QString::fromUtf8(data);
+    if (!dataText.isEmpty() && !dataText.contains(QChar::ReplacementCharacter)) {
+        if (dataText == "Y29ubmVjdA==") {
+            emit successConnect(true);
+            return;
+        } if (dataText == "ZGlzY29ubmVjdA==") {
+            emit successConnect(false);
+            return;
+        }
+        emit getText(dataText);
+        return;
+    }
 }
 
 void BleClient::deviceDisconnected() {
     qDebug() << "Disconnected from BLE server.";
+    emit successConnect(false);
 }

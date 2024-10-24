@@ -11,6 +11,7 @@
 #include <QBluetoothDeviceDiscoveryAgent>
 #include <QBluetoothDeviceInfo>
 #include <QBluetoothLocalDevice>
+#include <QPointer>
 
 #include <common/clipboardmonitor.h>
 #include <common/filemanager.h>
@@ -20,8 +21,7 @@ namespace Ui {
 class searchWidget;
 }
 
-class SearchWidget : public QFrame
-{
+class SearchWidget : public QFrame {
     Q_OBJECT
 
 
@@ -47,8 +47,8 @@ private slots:
     void deviceDiscovered(const QBluetoothDeviceInfo &device);
     void scanFinished();
 
-
-
+signals:
+    void successConnect(bool success);
 
 private:
     const static QString CONNECT;
@@ -64,13 +64,15 @@ private:
     QBluetoothDeviceDiscoveryAgent *m_discoveryAgent;
 
     FileManager *m_fileManager;
-    BleClient *m_bleClient;
-    BleServer *m_bleServer;
+    QPointer<BleClient> m_bleClient;
+    QPointer<BleServer> m_bleServer;
     ClipboardMonitor *m_clibBoardMonitor;
     // QBluetoothLocalDevice *m_localDevice;
 
     QLowEnergyController* m_controller;
 
+    void createBleClient();
+    void createBleServer();
     void initFindedDevices();
     void updateVisibility();
     bool checkOnUnicModel(const QStandardItemModel *model, const QString deviceBleName);

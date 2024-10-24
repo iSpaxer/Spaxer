@@ -27,6 +27,8 @@ MainWindow::MainWindow(QWidget *parent):
     connect(m_mainWidget, &MainWidget::enableServer,
             m_searchWidget, &SearchWidget::enableServer);
 
+    connect(m_searchWidget, &SearchWidget::successConnect,
+            m_mainWidget, &MainWidget::successConnect)  ;
 
 }
 
