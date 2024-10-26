@@ -57,14 +57,10 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 # icons_folder = $$PWD/AppIcons
 ios {
-    # source_folder = $$PWD/AppIcons
-    # # Укажите путь, куда нужно скопировать папку в каталоге сборки
-    # build_folder = $$OUT_PWD
+    QMAKE_INFO_PLIST = ios/Info.plist
+    QMAKE_BUNDLE_DATA += AppIcons/Assets.xcassets
+    QMAKE_ASSET_CATALOGS = AppIcons/Assets.xcassets
 
-    # # Определите правило копирования
-    # QMAKE_POST_LINK += cp -r $$source_folder $$build_folder
-
-    # XCODE_RESOURCES += $$OUT_PWD/AppIcons
 
     QT += gui-private
     QMAKE_CXXFLAGS += -fobjc-arc  # Включаем ARC (Automatic Reference Counting) для Objective-C++

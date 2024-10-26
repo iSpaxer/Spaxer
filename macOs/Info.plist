@@ -6,18 +6,9 @@
 	<string>Spaxer</string>
 	<key>CFBundleExecutable</key>
 	<string>Spaxer</string>
-	<key>CFBundleIcons</key>
-<!--	<dict>
-		<key>CFBundlePrimaryIcon</key>
-		<dict>
-			<key>CFBundleIconFiles</key>
-			<array>
-				<string>AppIcon</string>
-			</array>
-		</dict>
-        </dict>-->
-        <key>XSAppIconAssets</key>
-        <string>AppIcons/Asset.xcassets</string>
+	
+	<key>XSAppIconAssets</key>
+	<string>AppIcons/Asset.xcassets</string>
 
 	<key>CFBundleIdentifier</key>
 	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
