@@ -5,8 +5,9 @@
 #include <QPushButton>
 #include <QStackedWidget>
 
-#include <search-wgt/searchwidget.h>
+// #include <search-wgt/searchwidget.h>
 #include <main-wgt/mainwidget.h>
+#include <search-wgt/SearchWidget.h>
 #include <settings-wgt/settingswidget.h>
 
 

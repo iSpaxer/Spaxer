@@ -57,7 +57,7 @@ private:
     bool m_serverIsEnable;
     bool m_localDeviceIsServer;
     Ui::searchWidget *ui;
-    SearchItemDelegate *m_delegate;
+    SearchItemDelegate *m_delegate; // todo проблема в делегате
     QStandardItemModel *m_modelByFindedDevices;
     QStandardItemModel *m_modelByDevicesForConnection;
     QStandardItemModel *m_modelByConnectionDevice;

@@ -44,7 +44,7 @@ void SearchItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &op
     painter->restore();
 }
 
-QSize SearchItemDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const {
-    // Set the height of each item
-    return QSize(option.rect.width(), 60);
-}
+// QSize SearchItemDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const {
+//     // Set the height of each item
+//     return QSize(option.rect.width(), 60);
+// }
