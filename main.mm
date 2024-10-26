@@ -55,14 +55,14 @@ void requestBluetoothPermission(QApplication &app) {
 
 int main(int argc, char *argv[]) {
     QApplication app(argc, argv);
-
+    app.setWindowIcon(QIcon(":/AppIcons/spaxer_icon.png"));
     #ifdef Q_OS_IOS
     requestBluetoothPermission(app);
     preventScreenLock();
-    configureWindowForFullscreen();
+    // configureWindowForFullscreen();
     #endif
 
     MainWindow w;
-    w.showFullScreen();
+    w.show();
     return app.exec();
 }

@@ -8,7 +8,12 @@
 	<string>Spaxer</string>
 	
 	<key>XSAppIconAssets</key>
-	<string>AppIcons/Asset.xcassets</string>
+	<string>AppIcons/Assets.xcassets</string>
+
+	<key>CFBundleIconName</key>
+	<string>AppIcons</string>
+
+
 
 	<key>CFBundleIdentifier</key>
 	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>

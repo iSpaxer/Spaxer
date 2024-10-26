@@ -69,8 +69,16 @@ ios {
     LIBS += -framework CoreBluetooth
 }
 # LIBS += -framework IOBluetooth
+
 macx {
-    XCODE_RESOURCES += $$icons_folder
+    # QMAKE_BUNDLE_DATA += AppIcons.xcassets
+
+# Копируем .xca
+    # QMAKE_BUNDLE_DATA += AppIconDir
+    # ICON_DIR = $$PWD/AppIcons/Assets.xcassets
+    # QMAKE_POST_LINK += xcrun actool --output-format human-readable-text --notices --warnings --platform macosx --compile \"$${OUT_PWD}/$${TARGET}.app/Contents/Resources\" \"$${ICON_DIR}\"
+
+
     QMAKE_CXXFLAGS += -fobjc-arc  # Включаем ARC (Automatic Reference Counting) для Objective-C++
     QMAKE_INFO_PLIST = $$PWD/macOs/Info.plist
     LIBS += -framework CoreBluetooth -framework IOBluetooth
