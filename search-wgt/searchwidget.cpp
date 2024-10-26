@@ -22,6 +22,7 @@ SearchWidget::SearchWidget(QWidget *parent):
     m_fileManager(new FileManager(this)),
     m_bleClient(nullptr),
     m_bleServer(nullptr),
+    m_localDeviceIsServer(false),
     m_clibBoardMonitor(new ClipboardMonitor(this)) {
     ui->setupUi(this);
 

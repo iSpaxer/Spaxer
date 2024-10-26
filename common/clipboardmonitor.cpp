@@ -8,7 +8,7 @@ ClipboardMonitor::ClipboardMonitor(QObject *parent)
     #ifdef Q_OS_MAC
     startClipboardTimer();
     #else
-    startClipboardSignals();
+    connect(clipboard, &QClipboard::dataChanged, this, &ClipboardMonitor::startClipboardSignals);
     #endif
 }
 
@@ -74,6 +74,7 @@ void ClipboardMonitor::startClipboardTimer() {
 }
 
 void ClipboardMonitor::startClipboardSignals() {
+    qDebug() << "signals";
     const QMimeData *mimeData = clipboard->mimeData();
 
     // Проверяем текст
