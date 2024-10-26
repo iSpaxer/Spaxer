@@ -12,39 +12,43 @@ BleServer::BleServer(QObject *parent): QObject(parent),
 }
 
 void BleServer::start() {
-    qDebug() << "start Server";
-    serviceData.setType(QLowEnergyServiceData::ServiceTypePrimary);
+    if (m_start) {
+        m_start = false;
 
-    // Задаем уникальный UUID для сервиса (можно использовать SerialPort, но лучше задать свой)
-    serviceData.setUuid(QBluetoothUuid(uuid)); // Пример уникального UUID сервиса
+        qDebug() << "start Server";
+        serviceData.setType(QLowEnergyServiceData::ServiceTypePrimary);
 
-    // Создаем данные для характеристики
-    charData.setUuid(QBluetoothUuid(charUuid)); // Пример уникального UUID характеристики
-    charData.setProperties(QLowEnergyCharacteristic::Indicate | QLowEnergyCharacteristic::Write);
-    charData.setValue(QByteArray(2, 0)); // Стартовое значение
+        // Задаем уникальный UUID для сервиса (можно использовать SerialPort, но лучше задать свой)
+        serviceData.setUuid(QBluetoothUuid(uuid)); // Пример уникального UUID сервиса
 
-    // Добавляем характеристику в сервис
-    serviceData.addCharacteristic(charData);
+        // Создаем данные для характеристики
+        charData.setUuid(QBluetoothUuid(charUuid)); // Пример уникального UUID характеристики
+        charData.setProperties(QLowEnergyCharacteristic::Indicate | QLowEnergyCharacteristic::Write);
+        charData.setValue(QByteArray(2, 0)); // Стартовое значение
 
-    // Создаем контроллер BLE и сервис
-    controller = QLowEnergyController::createPeripheral(this);
-    service = controller->addService(serviceData);
+        // Добавляем характеристику в сервис
+        serviceData.addCharacteristic(charData);
 
-    // Настройка рекламных данных
-    QLowEnergyAdvertisingData advertisingData;
-    advertisingData.setDiscoverability(QLowEnergyAdvertisingData::DiscoverabilityGeneral);
-    advertisingData.setIncludePowerLevel(true);
-    advertisingData.setLocalName("BLE_Server");
-    advertisingData.setServices(QList<QBluetoothUuid>() << QBluetoothUuid(uuid)); // Тот же UUID сервиса хз но можно и неодинаково
+        // Создаем контроллер BLE и сервис
+        controller = QLowEnergyController::createPeripheral(this);
+        service = controller->addService(serviceData);
 
-    // Подключение сигналов
-    connect(controller, &QLowEnergyController::connected, this, &BleServer::deviceConnected);
-    connect(controller, &QLowEnergyController::disconnected, this, &BleServer::deviceDisconnected);
-    connect(service, &QLowEnergyService::characteristicChanged, this, &BleServer::characteristicChanged);
+        // Настройка рекламных данных
+        QLowEnergyAdvertisingData advertisingData;
+        advertisingData.setDiscoverability(QLowEnergyAdvertisingData::DiscoverabilityGeneral);
+        advertisingData.setIncludePowerLevel(true);
+        advertisingData.setLocalName("BLE_Server");
+        advertisingData.setServices(QList<QBluetoothUuid>() << QBluetoothUuid(uuid)); // Тот же UUID сервиса хз но можно и неодинаково
 
-    // Запуск рекламы
-    controller->startAdvertising(QLowEnergyAdvertisingParameters(), advertisingData, advertisingData);
-    qDebug() << "Advertising started!";
+        // Подключение сигналов
+        connect(controller, &QLowEnergyController::connected, this, &BleServer::deviceConnected);
+        connect(controller, &QLowEnergyController::disconnected, this, &BleServer::deviceDisconnected);
+        connect(service, &QLowEnergyService::characteristicChanged, this, &BleServer::characteristicChanged);
+
+        // Запуск рекламы
+        controller->startAdvertising(QLowEnergyAdvertisingParameters(), advertisingData, advertisingData);
+        qDebug() << "Advertising started!";
+    }
 }
 
 void BleServer::deviceConnected() {

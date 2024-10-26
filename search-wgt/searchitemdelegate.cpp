@@ -16,14 +16,14 @@ void SearchItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &op
     // Drawing device name (larger font)
     QFont deviceFont = option.font;
     deviceFont.setBold(true);
-    deviceFont.setPointSize(18);
+    deviceFont.setPointSize(16);
     painter->setFont(deviceFont);
     painter->setPen(Qt::white);
     painter->drawText(option.rect.adjusted(leftPadding, 10, -10, -30), Qt::AlignLeft | Qt::AlignTop, deviceName);
 
     // Drawing disconnect (smaller font)
     QFont notConnectFont = option.font;
-    notConnectFont.setPointSize(14);
+    notConnectFont.setPointSize(12);
     painter->setFont(notConnectFont);
     if (connect.isEmpty()) {
         painter->setPen(QColor("#F5F5F5"));
@@ -44,7 +44,7 @@ void SearchItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &op
     painter->restore();
 }
 
-// QSize SearchItemDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const {
-//     // Set the height of each item
-//     return QSize(option.rect.width(), 60);
-// }
+QSize SearchItemDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const {
+    // Set the height of each item
+    return QSize(option.rect.width(), 60);
+}

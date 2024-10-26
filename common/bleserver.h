@@ -44,6 +44,7 @@ private:
 
     QString uuid;
     QString charUuid;
+    bool m_start = true;
 };
 
 

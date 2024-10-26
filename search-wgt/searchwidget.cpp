@@ -14,15 +14,17 @@ const QString SearchWidget::NOT_CONNECTED = "Не подключено";
 
 SearchWidget::SearchWidget(QWidget *parent):
     QFrame(parent),
+    m_serverIsEnable(false),
+    m_localDeviceIsServer(false),
     ui(new Ui::searchWidget),
     // ,
     m_modelByFindedDevices(new QStandardItemModel(this)),
     m_modelByDevicesForConnection(new QStandardItemModel(this)),
+    m_modelByConnectionDevice(new QStandardItemModel(this)),
     m_discoveryAgent(new QBluetoothDeviceDiscoveryAgent(this)),
     m_fileManager(new FileManager(this)),
     m_bleClient(nullptr),
     m_bleServer(nullptr),
-    m_localDeviceIsServer(false),
     m_clibBoardMonitor(new ClipboardMonitor(this)) {
     ui->setupUi(this);
 
@@ -201,7 +203,9 @@ void SearchWidget::activeLocalDeviceIsServer(bool isServer) {
   emit successConnect(false); // сбрасываем индикатор
   m_localDeviceIsServer = isServer;
   if (isServer) {
-      if (!m_modelByConnectionDevice) m_modelByConnectionDevice = new QStandardItemModel(this);
+      // if (!m_modelByConnectionDevice) {
+      //     m_modelByConnectionDevice = new QStandardItemModel(this);
+      // }
       ui->devicesForConnection->setModel(m_modelByConnectionDevice);
       sendMessageStr("ZGlzY29ubmVjdA=="); // disconnect = ZGlzY29ubmVjdA== Y29ubmVjdA== - connect
       if (m_bleClient) {
