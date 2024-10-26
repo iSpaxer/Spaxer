@@ -64,6 +64,7 @@ SearchWidget::SearchWidget(QWidget *parent):
         updateConnectedDevices();
     });
 
+    // поиск устройств
     connect(m_discoveryAgent, &QBluetoothDeviceDiscoveryAgent::deviceDiscovered, this, &SearchWidget::deviceDiscovered);
     connect(m_discoveryAgent, &QBluetoothDeviceDiscoveryAgent::finished, this, &SearchWidget::scanFinished);
 
@@ -156,10 +157,10 @@ void SearchWidget::onItemDoubleCLicked(const QModelIndex &index) {
 
 // найдено устройство
 void SearchWidget::deviceDiscovered(const QBluetoothDeviceInfo &device) {
-  if (!device.name().isEmpty() && device.name() != device.address().toString()
+    if (!device.name().isEmpty() && device.name() != device.address().toString().replace(":", "-")
     && checkOnUnicModel(m_modelByFindedDevices, device.name())) {
 
-    qDebug() << device.name();
+    qDebug() << device.name() <<  device.address().toString() << (device.name() == device.address().toString());
     BluetoothStandartItem *item1 = new BluetoothStandartItem(device.name(), device);
 qDebug() << device.name()  << " " << device.deviceUuid() << " " << device.address() << " " << device.majorDeviceClass() << " " << device.minorDeviceClass() << " " << device.serviceClasses() << " " << device.rssi() << " ";    item1->setData(NOT_CONNECTED, Qt::UserRole + 2);
     m_modelByFindedDevices->appendRow(item1);

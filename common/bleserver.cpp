@@ -110,7 +110,6 @@ void BleServer::sendNotificationStr(const QString &data) {
     const QLowEnergyCharacteristic characteristic = service->characteristic(QBluetoothUuid(charUuid)); // Замените на ваш UUID характеристики
 
     // QByteArray valueToSend = QByteArray::fromHex("01");
-    QString text2 = "heh";
-    service->writeCharacteristic(characteristic, text2.toUtf8());
-    qDebug() << "NotificationStr sent:" << text2;
+    service->writeCharacteristic(characteristic, data.toUtf8());
+    qDebug() << "NotificationStr sent:" << data;
 }

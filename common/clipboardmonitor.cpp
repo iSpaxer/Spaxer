@@ -13,7 +13,9 @@ ClipboardMonitor::ClipboardMonitor(QObject *parent)
 }
 
 void ClipboardMonitor::setText(const QString &text) {
-    if (checkRepeatText(text)) {
+    qDebug() << "сетаем текст" << text;
+    if (!checkRepeatText(text)) {
+        qDebug() << "успешно";
         QApplication::clipboard()->setText(text);
     }
 }
