@@ -20,11 +20,11 @@
 - Linux/linux
 
 ## Скриншоты
-![telegram-cloud-photo-size-2-5255840467998860172-y](https://github.com/user-attachments/assets/97a47526-a125-4855-a0f7-1158737f54fa)
-![telegram-cloud-photo-size-2-5255840467998860173-y](https://github.com/user-attachments/assets/6dce0652-f3d9-46ba-8164-033b0276392b)
-![image](https://github.com/user-attachments/assets/1ffdac03-1bde-4a16-a873-12f7f5f04d17)
-![telegram-cloud-photo-size-2-5255840467998860179-x](https://github.com/user-attachments/assets/83506b5e-7d81-4157-87a9-22f60e46895b)
-
+<img src="https://github.com/user-attachments/assets/97a47526-a125-4855-a0f7-1158737f54fa" width="auto" height="600" alt="Описание изображения">
+<img src="https://github.com/user-attachments/assets/6dce0652-f3d9-46ba-8164-033b0276392b" width="auto" height="600" alt="Описание изображения">
+<img src="https://github.com/user-attachments/assets/1ffdac03-1bde-4a16-a873-12f7f5f04d17" width="auto" height="600" alt="Описание изображения">
+<img src="https://github.com/user-attachments/assets/83506b5e-7d81-4157-87a9-22f60e46895b" width="auto" height="600" alt="Описание изображения">
+<img src="https://github.com/user-attachments/assets/25efb387-6188-409c-9912-494f556760b4" width="auto" height="600" alt="Описание изображения">
 
 ## Todo
 - Сделать рефактор кода:
