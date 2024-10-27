@@ -91,6 +91,7 @@ int main(int argc, char *argv[]) {
     #endif
 
     MainWindow w;
+    w.setWindowTitle("Spaxer");
     w.show();
     return app.exec();
 }
