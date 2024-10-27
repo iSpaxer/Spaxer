@@ -3,15 +3,8 @@ QT       += core gui bluetooth
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 CONFIG += c++17
-# QMAKE_CC = gcc
-# QMAKE_CXX = g++
-
-# You can make your code fail to compile if it uses deprecated APIs.
-# In order to do so, uncomment the following line.
-#DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-    # bluetooth/bleclient.cpp \
     common/bleserver.cpp \
     common/clipboardmonitor.cpp \
     common/filemanager.cpp \
@@ -28,7 +21,6 @@ SOURCES += \
 
 
 HEADERS += \
-    # bluetooth/bleclient.h \
     common/bleserver.h \
     common/clipboardmonitor.h \
     common/filemanager.h \
@@ -54,14 +46,24 @@ qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
-# QMAKE_INFO_PLIST = $$PWD/macOs/Info.plist
+linux {
+    DESKTOP_FILE.source = $$PWD/spaxer.desktop
+    DESKTOP_FILE.path = $$[QT_INSTALL_PREFIX]/../share/applications
+    INSTALLS += DESKTOP_FILE
+    DESKTOP_FILE.path = $$HOME/.local/share/applications
+
+    source_file = $$PWD/spaxer_create_deb.sh
+    target_dir = $$OUT_PWD
+    QMAKE_POST_LINK += cp $$source_file $$target_dir
+}
+
 ios {
     QMAKE_CXXFLAGS += -fobjc-arc  # Включаем ARC (Automatic Reference Counting) для Objective-C++
     QMAKE_INFO_PLIST = $$PWD/macOs/Info.plist
     QMAKE_TARGET_BUNDLE_IDENTIFIER = com.mycompany.spaxer
     LIBS += -framework CoreBluetooth
 }
-# LIBS += -framework IOBluetooth
+
 macx {
     QMAKE_CXXFLAGS += -fobjc-arc  # Включаем ARC (Automatic Reference Counting) для Objective-C++
     QMAKE_INFO_PLIST = $$PWD/macOs/Info.plist
@@ -70,7 +72,9 @@ macx {
 
 DISTFILES += \
     macOs/Info.plist \
-    search.png
+    search.png \
+    spaxer.desktop \
+    spaxer_create_deb.sh
 
 RESOURCES += \
     resources.qrc

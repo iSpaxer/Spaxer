@@ -19,5 +19,7 @@
         <file>searchWidget/connected-devices.png</file>
         <file>statusbar/devices-black.png</file>
         <file>statusbar/devices-colored.png</file>
+        <file>AppIcons/spaxer_icon.png</file>
+        <file>AppIcons/spaxer_icon.ico</file>
     </qresource>
 </RCC>

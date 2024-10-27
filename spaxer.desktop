@@ -1,0 +1,6 @@
+[Desktop Entry]
+Name=Spaxer App
+Exec=/home/alex/CProject/clone/Spaxer/build/Desktop_Qt_6_7_2-Debug
+Icon=/home/alex/CProject/clone/Spaxer/build/Desktop_Qt_6_7_2-Debug/AppIcons/spaxer_icon.png
+Type=Application
+Categories=Utility;

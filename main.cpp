@@ -22,6 +22,38 @@ void allowScreenLock() {
 }
 #endif
 
+#ifdef Q_OS_LINUX
+void setupDesktopEntry() {
+    // Путь к файлу .desktop
+    QString desktopFilePath = QStandardPaths::writableLocation(QStandardPaths::ApplicationsLocation) + "/spaxer.desktop";
+
+    // Проверяем, если файл уже существует, то выходим
+    if (QFile::exists(desktopFilePath)) {
+        qDebug() << "Desktop entry already exists.";
+        return;
+    }
+
+    QString desktopFileContent =
+R"([Desktop Entry]
+Name=Spaxer
+Exec=/home/alex/CProject/clone/Spaxer/build/Desktop_Qt_6_7_2-Release/Spaxer
+Icon=/home/alex/CProject/clone/Spaxer/AppIcons/spaxer_icon.png
+Type=Application
+Categories=Utility;)";
+
+    // Сохраняем .desktop файл
+    QFile desktopFile(desktopFilePath);
+    if (desktopFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        desktopFile.write(desktopFileContent.toUtf8());
+        desktopFile.close();
+        qDebug() << "Desktop entry created at:" << desktopFilePath;
+    } else {
+        qWarning() << "Failed to create desktop entry.";
+    }
+}
+
+#endif
+
 void requestBluetoothPermission(QApplication &app) {
     // Создание объекта разрешений для Bluetooth
     QBluetoothPermission permission;
@@ -47,7 +79,12 @@ void requestBluetoothPermission(QApplication &app) {
 
 int main(int argc, char *argv[]) {
     QApplication app(argc, argv);
+    app.setWindowIcon(QIcon(":/AppIcons/spaxer_icon.png"));
 
+#ifdef Q_OS_LINUX
+    // устанавливаем иконку
+    setupDesktopEntry();
+#endif
     #ifdef Q_OS_IOS
     requestBluetoothPermission(app);
     preventScreenLock();
