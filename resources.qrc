@@ -21,5 +21,6 @@
         <file>statusbar/devices-colored.png</file>
         <file>AppIcons/appstore.png</file>
         <file>AppIcons/spaxer_icon.png</file>
+        <file>AppIcons/spaxer_icon.icns</file>
     </qresource>
 </RCC>

@@ -78,7 +78,7 @@ macx {
     # ICON_DIR = $$PWD/AppIcons/Assets.xcassets
     # QMAKE_POST_LINK += xcrun actool --output-format human-readable-text --notices --warnings --platform macosx --compile \"$${OUT_PWD}/$${TARGET}.app/Contents/Resources\" \"$${ICON_DIR}\"
 
-
+    # ICON = spaxer_icon.icns
     QMAKE_CXXFLAGS += -fobjc-arc  # Включаем ARC (Automatic Reference Counting) для Objective-C++
     QMAKE_INFO_PLIST = $$PWD/macOs/Info.plist
     LIBS += -framework CoreBluetooth -framework IOBluetooth
